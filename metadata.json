@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Bizora",
+  "description": "A comprehensive AI-powered Enterprise Resource Planning system featuring accounting, inventory, marketing, and advanced AI utilities for analysis and content generation.",
+  "requestFramePermissions": [
+    "microphone",
+    "geolocation"
+  ]
+}
