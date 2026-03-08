@@ -52,9 +52,10 @@ const StockReport: React.FC = () => {
 
     // 0. Summary Calculations
     const { totalProducts, inventoryValue } = useMemo(() => {
+        const activeProducts = products.filter(p => !p.isDeleted);
         return {
-            totalProducts: products.length,
-            inventoryValue: products.reduce((sum, p) => sum + (p.purchasePrice * p.stock), 0)
+            totalProducts: activeProducts.length,
+            inventoryValue: activeProducts.reduce((sum, p) => sum + (p.purchasePrice * p.stock), 0)
         };
     }, [products]);
 

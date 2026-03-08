@@ -17,7 +17,7 @@ const Sell: React.FC = () => {
   const { user } = useAuth();
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [customerHistory, setCustomerHistory] = useState<LedgerEntry[]>([]);
-  const { transactions, products, customers, staff, updateProductStock, addEntity, addTransaction, promoCodes } = useData();
+  const { transactions, products, customers, staff, updateProductStock, addEntity, addTransaction, promoCodes, financialAccounts } = useData();
 
   const activeBusiness = useMemo(() => 
     user?.businesses?.find(b => b.name === user.businessName) || user?.businesses?.[0]
@@ -350,6 +350,11 @@ const Sell: React.FC = () => {
             type: 'Sale',
             amount: grandTotal,
             paymentMethod: payments.length > 1 ? 'Partial' : (payments[0].method as any),
+            payments: payments.map(p => ({
+                method: p.method,
+                amount: p.amount,
+                accountId: financialAccounts.find(a => a.isDefault)?.id || financialAccounts[0]?.id
+            })),
             amountPaid: totalPaid,
             dueAmount: calculatedDue,
             previousDue: previousDue,

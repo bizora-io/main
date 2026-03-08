@@ -118,17 +118,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(JSON.parse(savedUser));
     }
     
-    // Mock initial data
-    setSessions([
-        { id: 's1', userId: 'u1', device: 'Chrome on MacOS', ip: '192.168.1.1', location: 'Dhaka, BD', lastActive: new Date().toISOString(), isCurrent: true }
-    ]);
-    setDevices([
-        { id: 'd1', name: 'MacBook Pro', type: 'DESKTOP', lastUsed: new Date().toISOString(), isTrusted: true },
-        { id: 'd2', name: 'iPhone 15', type: 'MOBILE', lastUsed: new Date(Date.now() - 86400000).toISOString(), isTrusted: true }
-    ]);
-    setLoginHistory([
-        { id: 'h1', timestamp: new Date().toISOString(), status: 'SUCCESS', method: 'PIN', device: 'Chrome on MacOS', ip: '192.168.1.1' }
-    ]);
+    // Removed mock initial data
+    setSessions([]);
+    setDevices([]);
+    setLoginHistory([]);
   }, []);
 
   const logActivity = (action: string, module: string, details?: string) => {
@@ -317,6 +310,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const users = savedUsers ? JSON.parse(savedUsers) : [];
     users.push(newUser);
     localStorage.setItem('nexus_registered_users', JSON.stringify(users));
+
+    // Clear existing data for a clean start
+    Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('nexus_') && key !== 'nexus_user' && key !== 'nexus_registered_users') {
+            localStorage.removeItem(key);
+        }
+    });
 
     setUser(newUser);
     localStorage.setItem('nexus_user', JSON.stringify(newUser));

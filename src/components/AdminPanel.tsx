@@ -14,11 +14,7 @@ import {
 } from 'lucide-react';
 
 // Mock Database of Shop Owners
-const INITIAL_USERS = [
-    { id: 'u1', businessName: 'Knox Collection', owner: 'Md Ishtiak', mobile: '01711223344', email: 'ishtiak@knox.com', plan: 'Enterprise', status: 'Active', expiry: '2025-12-31', totalSell: 154000, totalBuy: 80000, address: 'Dhaka, Bangladesh', businessType: 'Retail / Fashion', signupDate: '2023-10-12', password: 'userpass123', loginCount: 45, lastActive: '10 mins ago', lastIp: '103.120.201.45', totalStores: 5, totalBusiness: 250000 },
-    { id: 'u2', businessName: 'Fashion Hub', owner: 'Sarah J.', mobile: '01999887766', email: 'sarah@fashion.com', plan: 'Pro', status: 'Active', expiry: '2024-06-30', totalSell: 45000, totalBuy: 20000, address: 'Chittagong, Bangladesh', businessType: 'Wholesale', signupDate: '2023-11-05', password: 'userpass456', loginCount: 12, lastActive: '2 hours ago', lastIp: '103.120.201.88', totalStores: 2, totalBusiness: 65000 },
-    { id: 'u3', businessName: 'Tiny Store', owner: 'John Doe', mobile: '01555443322', email: 'john@tiny.com', plan: 'Basic', status: 'Expired', expiry: '2023-12-31', totalSell: 1200, totalBuy: 500, address: 'Sylhet, Bangladesh', businessType: 'Grocery', signupDate: '2023-12-20', password: 'userpass789', loginCount: 3, lastActive: '5 days ago', lastIp: '103.120.201.12', totalStores: 1, totalBusiness: 1700 },
-];
+const INITIAL_USERS: any[] = [];
 
 // Mock Invoice Templates
 const INITIAL_TEMPLATES = [
@@ -37,18 +33,10 @@ const INITIAL_PLANS = [
 ];
 
 // Mock Admins
-const INITIAL_ADMINS = [
-    { id: 'a1', name: 'Super Admin', email: 'admin@system.com', role: 'SuperAdmin', ip: '192.168.1.1', lastActive: '2 mins ago', password: 'adminpassword123', permissions: ['all'] },
-    { id: 'a2', name: 'Support Lead', email: 'support@system.com', role: 'Admin', ip: '192.168.1.45', lastActive: '1 hour ago', password: 'supportpassword456', permissions: ['saas.support', 'saas.analytics'] },
-];
+const INITIAL_ADMINS: any[] = [];
 
 // Mock System Logs
-const INITIAL_LOGS = [
-    { id: 'l1', time: '2024-03-20 10:30 AM', user: 'Super Admin', module: 'Users', action: 'Added Admin', details: 'Added new admin: support@system.com' },
-    { id: 'l2', time: '2024-03-20 11:15 AM', user: 'Support Lead', module: 'Businesses', action: 'Edited Shop', details: 'Updated subscription for Nexus Store' },
-    { id: 'l3', time: '2024-03-20 12:00 PM', user: 'Super Admin', module: 'Security', action: 'Backup', details: 'Manual system backup triggered' },
-    { id: 'l4', time: '2024-03-20 01:30 PM', user: 'System', module: 'Subscription', action: 'Auto-Renew', details: 'Plan renewed for Fashion Hub' },
-];
+const INITIAL_LOGS: any[] = [];
 
 const AdminPanel: React.FC = () => {
     const { t, promoSlides, updatePromoSlides, currencySymbol } = useSettings();
