@@ -559,7 +559,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setTransactions(prev => [finalEntry, ...prev]);
 
     if (navigator.onLine) {
-        syncService.syncData([finalEntry]);
+        syncService.syncData([finalEntry]).then(success => {
+            if (!success) {
+                console.warn('Online sync failed, adding to pending transactions');
+                const newPending = [...pendingTransactions, finalEntry];
+                setPendingTransactions(newPending);
+                localStorage.setItem('pending_transactions', JSON.stringify(newPending));
+            }
+        });
     } else {
         const newPending = [...pendingTransactions, finalEntry];
         setPendingTransactions(newPending);

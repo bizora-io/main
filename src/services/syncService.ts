@@ -1,8 +1,12 @@
 export const syncData = async (data: any) => {
     const user = localStorage.getItem('nexus_user');
-    if (!user) return;
+    if (!user) {
+        console.warn('Sync skipped: No user logged in.');
+        return false;
+    }
     
     const userId = JSON.parse(user).id;
+    console.log(`Attempting to sync data for user: ${userId}`);
     
     try {
         const response = await fetch('/api/sync', {
@@ -13,7 +17,14 @@ export const syncData = async (data: any) => {
             },
             body: JSON.stringify({ userId, data })
         });
-        return response.ok;
+        
+        if (response.ok) {
+            console.log('Sync successful!');
+            return true;
+        } else {
+            console.error('Sync failed with status:', response.status);
+            return false;
+        }
     } catch (error) {
         console.error('Sync failed:', error);
         return false;
