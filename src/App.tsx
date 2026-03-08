@@ -202,15 +202,21 @@ import { Building } from 'lucide-react';
 
 // --- NEW COMPONENTS ---
 
-const PlaceholderPage = ({ title }: { title: string }) => (
+const PlaceholderPage = ({ title }: { title: string }) => {
+  const { t } = useSettings();
+
+  return (
     <div className="flex flex-col items-center justify-center h-[60vh] text-slate-400">
-        <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6">
-            <Settings className="w-10 h-10 opacity-20" />
-        </div>
-        <h2 className="text-2xl font-bold text-slate-600 mb-2">{title}</h2>
-        <p>{t('This module is currently under development.')}</p>
+      <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6">
+        <Settings className="w-10 h-10 opacity-20" />
+      </div>
+
+      <h2 className="text-2xl font-bold text-slate-600 mb-2">{title}</h2>
+
+      <p>{t("This module is currently under development.")}</p>
     </div>
-);
+  );
+};
 
 // --- Main Layout Component ---
 
@@ -559,7 +565,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 import { LoginModal } from './components/LoginModal';
-import { AppLanguage, Currency, UserRole } from './types';
 // ...
 const AppContent: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
