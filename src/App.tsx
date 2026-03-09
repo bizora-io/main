@@ -40,7 +40,6 @@ import { NotificationProvider } from './contexts/NotificationContext';
 import { StoreProvider, useStores } from './contexts/StoreContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { DataProvider } from './contexts/DataContext';
-import { LoginModal } from './components/LoginModal';
 import { PERMISSIONS, hasPermission } from './utils/permissions';
 
 // --- Components for Navigation ---
@@ -203,21 +202,16 @@ import { Building } from 'lucide-react';
 
 // --- NEW COMPONENTS ---
 
-const PlaceholderPage = ({ title }: { title: string }) => {
-  const { t } = useSettings();
-
-  return (
+const PlaceholderPage = ({ title }: { title: string }) => (
     <div className="flex flex-col items-center justify-center h-[60vh] text-slate-400">
-      <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6">
-        <Settings className="w-10 h-10 opacity-20" />
-      </div>
-
-      <h2 className="text-2xl font-bold text-slate-600 mb-2">{title}</h2>
-
-      <p>{t("This module is currently under development.")}</p>
+        <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6">
+            <Settings className="w-10 h-10 opacity-20" />
+        </div>
+        <h2 className="text-2xl font-bold text-slate-600 mb-2">{title}</h2>
+        <p>{t('This module is currently under development.')}</p>
     </div>
-  );
-};
+);
+
 // --- Main Layout Component ---
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -564,20 +558,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   );
 };
 
-// ...
 const AppContent: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
   const { setCurrency } = useSettings();
-  const [showLoginModal, setShowLoginModal] = useState(false);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-        const user = localStorage.getItem('nexus_user');
-        if (!user) {
-            setShowLoginModal(true);
-        }
-    }
-  }, [isAuthenticated]);
 
   useEffect(() => {
     if (isAuthenticated && user?.businesses && user.businessName) {
@@ -589,12 +572,7 @@ const AppContent: React.FC = () => {
   }, [isAuthenticated, user?.businessName, user?.businesses, setCurrency]);
 
   if (!isAuthenticated) {
-    return (
-        <>
-            <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
-            <Auth />
-        </>
-    );
+    return <Auth />;
   }
 
   const isSaaSUser = user?.role === UserRole.SAAS_OWNER || user?.role === UserRole.SAAS_ADMIN;
