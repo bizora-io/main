@@ -218,7 +218,6 @@ const PlaceholderPage = ({ title }: { title: string }) => {
     </div>
   );
 };
-
 // --- Main Layout Component ---
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {

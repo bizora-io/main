@@ -43,7 +43,6 @@ import { PERMISSIONS, getAllPermissions } from '../utils/permissions';
 
 export interface User {
   id: string;
-  token?: string; // Added token property
   name?: string; // Added name property
   businessName: string;
   email: string;
@@ -116,13 +115,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const savedUser = localStorage.getItem('nexus_user');
     if (savedUser) {
-      const parsedUser = JSON.parse(savedUser);
-      // Auto-add token for existing users
-      if (!parsedUser.token) {
-          parsedUser.token = `mock-token-${parsedUser.id}`;
-          localStorage.setItem('nexus_user', JSON.stringify(parsedUser));
-      }
-      setUser(parsedUser);
+      setUser(JSON.parse(savedUser));
     }
     
     // Removed mock initial data
@@ -159,7 +152,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (identifier === 'admin' && (secret === 'admin123' || secret === '1234')) {
         const saasOwner: User = {
             id: 'saas-owner-001',
-            token: 'mock-token-saas-owner-001',
             name: 'SaaS Owner',
             businessName: 'Bizora Platform',
             email: 'owner@bizora.com',
@@ -187,7 +179,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (identifier === 'saas' && (secret === 'saas123' || secret === '1234')) {
         const saasAdmin: User = {
             id: 'saas-admin-001',
-            token: 'mock-token-saas-admin-001',
             name: 'SaaS Admin',
             businessName: 'Bizora Support',
             email: 'admin@bizora.com',
@@ -228,7 +219,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (staffMember) {
             const staffUser: User = {
                 id: staffMember.id,
-                token: `mock-token-${staffMember.id}`,
                 name: staffMember.name,
                 businessName: 'My Enterprise', // Default business name
                 email: `${staffMember.name.toLowerCase().replace(/\s/g, '.')}@example.com`, // Mock email
@@ -270,9 +260,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 setPendingUser(registeredUser);
                 return { success: true, require2fa: true };
             }
-            const userWithToken = { ...registeredUser, token: `mock-token-${registeredUser.id}` };
-            setUser(userWithToken);
-            localStorage.setItem('nexus_user', JSON.stringify(userWithToken));
+            setUser(registeredUser);
+            localStorage.setItem('nexus_user', JSON.stringify(registeredUser));
             logActivity('Login', 'Auth', `Logged in via ${method}`);
             return { success: true };
         }
@@ -293,10 +282,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signup = async (data: any): Promise<boolean> => {
-    const userId = 'user-' + Math.random().toString(36).substring(2, 7);
     const newUser: User = {
-      id: userId,
-      token: `mock-token-${userId}`,
+      id: 'user-' + Math.random().toString(36).substring(2, 7),
       name: data.name || 'Shop Owner',
       businessName: data.businessName,
       email: data.email,

@@ -20,8 +20,7 @@ async function startServer() {
       .then(() => console.log("Connected to MongoDB"))
       .catch(err => console.error("MongoDB connection error:", err));
   } else {
-    console.warn("MONGODB_URI not set. Database sync will be disabled.");
-    console.warn("Please set MONGODB_URI in your .env file or environment variables.");
+    console.warn("MONGODB_URI not set, database sync will be disabled");
   }
 
   // Security Middlewares
