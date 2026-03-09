@@ -470,204 +470,72 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { activeStore } = useStores();
   
   // RAW Data States (Contain all stores data)
-    const [products, setProducts] = useState<Product[]>(() => {
-      const saved = localStorage.getItem('nexus_products');
-      return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_products', JSON.stringify(products));
-  }, [products]);
-
-  const [customers, setCustomers] = useState<Entity[]>(() => {
-      const saved = localStorage.getItem('nexus_customers');
-      return saved ? JSON.parse(saved) : [
+  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  const [customers, setCustomers] = useState<Entity[]>([
       { id: 'c1', name: 'Rahim Uddin', mobile: '01711223344', address: 'Dhaka, Bangladesh', type: 'Customer', loyaltyPoints: 120 }
-  ];
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_customers', JSON.stringify(customers));
-  }, [customers]);
-
-  const [suppliers, setSuppliers] = useState<Entity[]>(() => {
-      const saved = localStorage.getItem('nexus_suppliers');
-      return saved ? JSON.parse(saved) : [
+  ]);
+  const [suppliers, setSuppliers] = useState<Entity[]>([
       { id: 's1', name: 'ACI Pharma', mobile: '01911223344', address: 'Tejgaon Ind. Area', type: 'Supplier' }
-  ];
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_suppliers', JSON.stringify(suppliers));
-  }, [suppliers]);
-
-  const [transactions, setTransactions] = useState<LedgerEntry[]>(() => {
-      const saved = localStorage.getItem('nexus_transactions');
-      return saved ? JSON.parse(saved) : [
+  ]);
+  const [transactions, setTransactions] = useState<LedgerEntry[]>([
       { id: 't1', storeId: '1', date: '2024-03-10', entityName: 'Rahim Uddin', entityMobile: '01711223344', type: 'Sale', amount: 500, paymentMethod: 'Cash', accountId: 'cash-1', createdBy: 'Admin', details: { subtotal: 500, tax: 0, discount: 0, delivery: 0 } },
       { id: 't2', storeId: '1', date: '2024-03-11', entityName: 'ACI Pharma', type: 'Purchase', amount: 2000, paymentMethod: 'Due', createdBy: 'Manager' }
-  ];
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_transactions', JSON.stringify(transactions));
-  }, [transactions]);
-
-  const [financialAccounts, setFinancialAccounts] = useState<FinancialAccount[]>(() => {
-      const saved = localStorage.getItem('nexus_financialAccounts');
-      return saved ? JSON.parse(saved) : INITIAL_ACCOUNTS;
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_financialAccounts', JSON.stringify(financialAccounts));
-  }, [financialAccounts]);
-
-  const [onlineOrders, setOnlineOrders] = useState<OnlineOrder[]>(() => {
-      const saved = localStorage.getItem('nexus_onlineOrders');
-      return saved ? JSON.parse(saved) : INITIAL_ONLINE_ORDERS;
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_onlineOrders', JSON.stringify(onlineOrders));
-  }, [onlineOrders]);
-
-  const [appLogs, setAppLogs] = useState<AppLog[]>(() => {
-      const saved = localStorage.getItem('nexus_appLogs');
-      return saved ? JSON.parse(saved) : INITIAL_LOGS;
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_appLogs', JSON.stringify(appLogs));
-  }, [appLogs]);
-
-  const [courierSettings, setCourierSettings] = useState<CourierConfig[]>(() => {
-      const saved = localStorage.getItem('nexus_courierSettings');
-      return saved ? JSON.parse(saved) : [
-      { provider: 'Pathao', apiKey: '', apiSecret: '', enabled: false },
-      { provider: 'Steadfast', apiKey: '', apiSecret: '', enabled: false },
-      { provider: 'Paperfly', apiKey: '', apiSecret: '', enabled: false },
-      { provider: 'RedX', apiKey: '', apiSecret: '', enabled: false },
-  ];
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_courierSettings', JSON.stringify(courierSettings));
-  }, [courierSettings]);
-
-  const [domainSettings, setDomainSettings] = useState<DomainConfig>(() => {
-      const saved = localStorage.getItem('nexus_domainSettings');
-      return saved ? JSON.parse(saved) : {
-      subdomain: 'ishas-fashion.bizora.com',
-      customDomain: '',
-      status: 'Not Connected'
-  };
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_domainSettings', JSON.stringify(domainSettings));
-  }, [domainSettings]);
-
-  const [promoCodes, setPromoCodes] = useState<PromoCode[]>(() => {
-      const saved = localStorage.getItem('nexus_promoCodes');
-      return saved ? JSON.parse(saved) : [
-      { id: '1', code: 'WELCOME10', discount: 10, type: 'percentage', status: 'active' }
-  ];
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_promoCodes', JSON.stringify(promoCodes));
-  }, [promoCodes]);
-
-  const [shopPolicies, setShopPolicies] = useState<ShopPolicies>(() => {
-      const saved = localStorage.getItem('nexus_shopPolicies');
-      return saved ? JSON.parse(saved) : {
-      terms: 'All sales are final unless item is defective.',
-      refund: 'Refunds processed within 7 days of return receipt.',
-      shipping: 'Standard delivery takes 3-5 business days.'
-  };
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_shopPolicies', JSON.stringify(shopPolicies));
-  }, [shopPolicies]);
-
-  const [categories, setCategories] = useState<Category[]>(() => {
-      const saved = localStorage.getItem('nexus_categories');
-      return saved ? JSON.parse(saved) : INITIAL_CATEGORIES;
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_categories', JSON.stringify(categories));
-  }, [categories]);
-
-  const [expenseCategories, setExpenseCategories] = useState<ExpenseCategory[]>(() => {
-      const saved = localStorage.getItem('nexus_expenseCategories');
-      return saved ? JSON.parse(saved) : INITIAL_EXPENSE_CATEGORIES;
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_expenseCategories', JSON.stringify(expenseCategories));
-  }, [expenseCategories]);
-
-  const [customerGroups, setCustomerGroups] = useState<CustomerGroup[]>(() => {
-      const saved = localStorage.getItem('nexus_customerGroups');
-      return saved ? JSON.parse(saved) : [
-      { id: 'vip', name: 'VIP', color: '#8b5cf6', description: 'High value customers' },
-      { id: 'new', name: 'New', color: '#10b981', description: 'Joined in last 30 days' }
-  ];
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_customerGroups', JSON.stringify(customerGroups));
-  }, [customerGroups]);
-
-  const [supportTickets, setSupportTickets] = useState<SupportTicket[]>(() => {
-      const saved = localStorage.getItem('nexus_supportTickets');
-      return saved ? JSON.parse(saved) : [];
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_supportTickets', JSON.stringify(supportTickets));
-  }, [supportTickets]);
-
-  const [feedbacks, setFeedbacks] = useState<CustomerFeedback[]>(() => {
-      const saved = localStorage.getItem('nexus_feedbacks');
-      return saved ? JSON.parse(saved) : [];
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_feedbacks', JSON.stringify(feedbacks));
-  }, [feedbacks]);
-
-  const [marketingCampaigns, setMarketingCampaigns] = useState<MarketingCampaign[]>(() => {
-      const saved = localStorage.getItem('nexus_marketingCampaigns');
-      return saved ? JSON.parse(saved) : [];
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_marketingCampaigns', JSON.stringify(marketingCampaigns));
-  }, [marketingCampaigns]);
-
-  const [rawMaterials, setRawMaterials] = useState<RawMaterial[]>(() => {
-      const saved = localStorage.getItem('nexus_rawMaterials');
-      return saved ? JSON.parse(saved) : [
-      { id: 'm1', name: 'Cotton Fabric', stock: 500, unit: 'Meters', cost: 50, minLevel: 100 },
-      { id: 'm2', name: 'Thread Spool', stock: 200, unit: 'Pcs', cost: 10, minLevel: 50 },
-      { id: 'm3', name: 'Buttons', stock: 1000, unit: 'Pcs', cost: 1, minLevel: 200 },
-  ];
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_rawMaterials', JSON.stringify(rawMaterials));
-  }, [rawMaterials]);
-
-  const [boms, setBoms] = useState<BillOfMaterial[]>(() => {
-      const saved = localStorage.getItem('nexus_boms');
-      return saved ? JSON.parse(saved) : [];
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_boms', JSON.stringify(boms));
-  }, [boms]);
-
-  const [productionBatches, setProductionBatches] = useState<ProductionBatch[]>(() => {
-      const saved = localStorage.getItem('nexus_productionBatches');
-      return saved ? JSON.parse(saved) : [];
-  });
-  useEffect(() => {
-      localStorage.setItem('nexus_productionBatches', JSON.stringify(productionBatches));
-  }, [productionBatches]);
-
+  ]);
+  const [financialAccounts, setFinancialAccounts] = useState<FinancialAccount[]>(INITIAL_ACCOUNTS);
+  const [onlineOrders, setOnlineOrders] = useState<OnlineOrder[]>(INITIAL_ONLINE_ORDERS);
   const [staff, setStaffState] = useState<Staff[]>(() => {
       const saved = localStorage.getItem('nexus_staff');
       return saved ? JSON.parse(saved) : INITIAL_STAFF;
   });
+
   useEffect(() => {
       localStorage.setItem('nexus_staff', JSON.stringify(staff));
   }, [staff]);
+  const [appLogs, setAppLogs] = useState<AppLog[]>(INITIAL_LOGS);
+  
+  // Settings
+  const [courierSettings, setCourierSettings] = useState<CourierConfig[]>([
+      { provider: 'Pathao', apiKey: '', apiSecret: '', enabled: false },
+      { provider: 'Steadfast', apiKey: '', apiSecret: '', enabled: false },
+      { provider: 'Paperfly', apiKey: '', apiSecret: '', enabled: false },
+      { provider: 'RedX', apiKey: '', apiSecret: '', enabled: false },
+  ]);
+  const [domainSettings, setDomainSettings] = useState<DomainConfig>({
+      subdomain: 'ishas-fashion.bizora.com',
+      customDomain: '',
+      status: 'Not Connected'
+  });
+  
+  const [promoCodes, setPromoCodes] = useState<PromoCode[]>([
+      { id: '1', code: 'WELCOME10', discount: 10, type: 'percentage', status: 'active' }
+  ]);
+  
+  const [shopPolicies, setShopPolicies] = useState<ShopPolicies>({
+      terms: 'All sales are final unless item is defective.',
+      refund: 'Refunds processed within 7 days of return receipt.',
+      shipping: 'Standard delivery takes 3-5 business days.'
+  });
 
+  const [categories, setCategories] = useState<Category[]>(INITIAL_CATEGORIES);
+  const [expenseCategories, setExpenseCategories] = useState<ExpenseCategory[]>(INITIAL_EXPENSE_CATEGORIES);
 
+  // CRM States
+  const [customerGroups, setCustomerGroups] = useState<CustomerGroup[]>([
+      { id: 'vip', name: 'VIP', color: '#8b5cf6', description: 'High value customers' },
+      { id: 'new', name: 'New', color: '#10b981', description: 'Joined in last 30 days' }
+  ]);
+  const [supportTickets, setSupportTickets] = useState<SupportTicket[]>([]);
+  const [feedbacks, setFeedbacks] = useState<CustomerFeedback[]>([]);
+  const [marketingCampaigns, setMarketingCampaigns] = useState<MarketingCampaign[]>([]);
+
+  // Production State
+  const [rawMaterials, setRawMaterials] = useState<RawMaterial[]>([
+      { id: 'm1', name: 'Cotton Fabric', stock: 500, unit: 'Meters', cost: 50, minLevel: 100 },
+      { id: 'm2', name: 'Thread Spool', stock: 200, unit: 'Pcs', cost: 10, minLevel: 50 },
+      { id: 'm3', name: 'Buttons', stock: 1000, unit: 'Pcs', cost: 1, minLevel: 200 },
+  ]);
+  const [boms, setBoms] = useState<BillOfMaterial[]>([]);
+  const [productionBatches, setProductionBatches] = useState<ProductionBatch[]>([]);
 
   // --- FILTERED DATA (Based on Active Store) ---
   const currentStoreId = activeStore === 'HEAD_OFFICE' ? 'ALL' : activeStore.id;

@@ -16,7 +16,6 @@ const BusinessReports: React.FC = () => {
     const { t, currencySymbol, formatMoney } = useSettings();
     const { transactions, financialAccounts, products, suppliers, staff, customers } = useData();
     const [activeReport, setActiveReport] = useState<'overview' | 'tax' | 'financial' | 'profit' | 'performance' | 'trends' | 'insights'>('overview');
-    const [selectedProduct, setSelectedProduct] = useState<{ id: string; name: string } | null>(null);
     const [filterType, setFilterType] = useState<'3months' | 'year' | 'lifetime' | 'custom'>('lifetime');
     const [customDate, setCustomDate] = useState({ start: '', end: '' });
 
@@ -76,10 +75,7 @@ const BusinessReports: React.FC = () => {
                     cashSales += t.amount;
                 }
                 // Estimated Cost (COGS)
-                t.items?.forEach(item => {
-                    const prod = products.find(p => p.id === item.productId);
-                    productCost += (item.qty * (prod ? prod.purchasePrice : (item.price * 0.7)));
-                });
+                productCost += (t.amount * 0.7); 
                 outputVat += taxAmount;
             }
             if (t.type === 'Due') {
@@ -150,7 +146,7 @@ const BusinessReports: React.FC = () => {
 
     // Product Profitability Analysis
     const productPerformance = useMemo(() => {
-        const stats: Record<string, { id: string; name: string; qty: number; revenue: number; cost: number }> = {};
+        const stats: Record<string, { name: string; qty: number; revenue: number; cost: number }> = {};
 
         filteredTransactions.forEach(t => {
             if (t.type === 'Sale' && t.items) {
@@ -162,7 +158,6 @@ const BusinessReports: React.FC = () => {
                     
                     if (!stats[item.productId]) {
                         stats[item.productId] = { 
-                            id: item.productId,
                             name: item.name, 
                             qty: 0, 
                             revenue: 0, 
@@ -333,53 +328,8 @@ const BusinessReports: React.FC = () => {
         document.body.removeChild(link);
     };
 
-    const productSales = useMemo(() => {
-        if (!selectedProduct) return [];
-        return filteredTransactions.filter(t => t.type === 'Sale' && t.items?.some(i => i.productId === selectedProduct.id));
-    }, [filteredTransactions, selectedProduct]);
-
     return (
         <div className="space-y-6">
-            {/* Modal for Product Sales Details */}
-            {selectedProduct && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[80vh] overflow-y-auto">
-                        <div className="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white">
-                            <h3 className="text-xl font-bold text-slate-800">Sales Details: {selectedProduct.name}</h3>
-                            <button onClick={() => setSelectedProduct(null)} className="text-slate-400 hover:text-slate-600 font-bold">Close</button>
-                        </div>
-                        <div className="p-6">
-                            <table className="w-full text-sm text-left">
-                                <thead className="text-slate-500 font-medium border-b border-slate-100">
-                                    <tr>
-                                        <th className="pb-3">Date</th>
-                                        <th className="pb-3">Customer</th>
-                                        <th className="pb-3 text-center">Qty</th>
-                                        <th className="pb-3 text-right">Profit</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100">
-                                    {productSales.map(t => {
-                                        const item = t.items?.find(i => i.productId === selectedProduct.id);
-                                        const prod = products.find(p => p.id === selectedProduct.id);
-                                        const unitCost = prod ? prod.purchasePrice : (item ? item.price * 0.7 : 0);
-                                        const profit = item ? (item.price - unitCost) * item.qty : 0;
-                                        return (
-                                            <tr key={t.id}>
-                                                <td className="py-3">{t.date}</td>
-                                                <td className="py-3 font-medium">{t.entityName}</td>
-                                                <td className="py-3 text-center">{item?.qty}</td>
-                                                <td className={`py-3 text-right font-bold ${profit >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>{formatMoney(profit)}</td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            )}
-            
             <div className="flex flex-col md:flex-row justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
                 <div className="flex items-center gap-3 w-full md:w-auto mb-4 md:mb-0">
                     <div className="p-3 bg-indigo-100 text-indigo-600 rounded-lg">
@@ -763,9 +713,7 @@ const BusinessReports: React.FC = () => {
                                         productPerformance.map((p, idx) => (
                                             <tr key={idx} className="hover:bg-slate-50">
                                                 <td className="px-6 py-4 font-medium text-slate-800">{p.name}</td>
-                                                <td className="px-6 py-4 text-center cursor-pointer text-indigo-600 underline font-bold" onClick={() => setSelectedProduct({ id: p.id, name: p.name })}>
-                                                    {p.qty}
-                                                </td>
+                                                <td className="px-6 py-4 text-center">{p.qty}</td>
                                                 <td className="px-6 py-4 text-right text-slate-600">{formatMoney(p.revenue)}</td>
                                                 <td className="px-6 py-4 text-right text-slate-600">{formatMoney(p.cost)}</td>
                                                 <td className={`px-6 py-4 text-right font-bold ${p.profit >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
@@ -921,17 +869,17 @@ const BusinessReports: React.FC = () => {
                                         <span className="font-mono">{formatMoney(metrics.cashSales + metrics.dueSales)}</span>
                                     </div>
                                     <div className="flex justify-between mb-3 text-slate-500">
-                                        <span>Cost of Goods Sold</span>
-                                        <span className="font-mono">-{formatMoney(metrics.cashSales + metrics.dueSales - metrics.grossProfit)}</span>
+                                        <span>Cost of Goods Sold (COGS) (Est)</span>
+                                        <span className="font-mono">-{formatMoney((metrics.cashSales + metrics.dueSales) * 0.7)}</span>
                                     </div>
-                                    <div className="flex justify-between font-bold text-slate-800 border-t border-slate-100 pt-2">
+                                    <div className="flex justify-between font-bold text-indigo-700 border-t border-slate-100 pt-2">
                                         <span>Gross Profit</span>
                                         <span>{formatMoney(metrics.grossProfit)}</span>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <h4 className="font-bold text-slate-500 text-xs uppercase mb-2">OPERATING EXPENSES</h4>
+                                    <h4 className="font-bold text-slate-500 text-xs uppercase mb-2">Operating Expenses</h4>
                                     <div className="flex justify-between mb-1">
                                         <span className="text-slate-600">General Expenses & Salaries</span>
                                         <span className="font-mono text-red-500">-{formatMoney(metrics.totalExpenses)}</span>

@@ -208,7 +208,7 @@ const PlaceholderPage = ({ title }: { title: string }) => (
             <Settings className="w-10 h-10 opacity-20" />
         </div>
         <h2 className="text-2xl font-bold text-slate-600 mb-2">{title}</h2>
-        <p>{t('This module is currently under development.')}</p>
+        <p>This module is currently under development.</p>
     </div>
 );
 
