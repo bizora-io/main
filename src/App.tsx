@@ -208,7 +208,7 @@ const PlaceholderPage = ({ title }: { title: string }) => (
             <Settings className="w-10 h-10 opacity-20" />
         </div>
         <h2 className="text-2xl font-bold text-slate-600 mb-2">{title}</h2>
-        <p>This module is currently under development.</p>
+        <p>{t('This module is currently under development.')}</p>
     </div>
 );
 
@@ -558,9 +558,22 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   );
 };
 
+import { LoginModal } from './components/LoginModal';
+import { AppLanguage, Currency, UserRole } from './types';
+// ...
 const AppContent: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
   const { setCurrency } = useSettings();
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+        const user = localStorage.getItem('nexus_user');
+        if (!user) {
+            setShowLoginModal(true);
+        }
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (isAuthenticated && user?.businesses && user.businessName) {
@@ -572,7 +585,12 @@ const AppContent: React.FC = () => {
   }, [isAuthenticated, user?.businessName, user?.businesses, setCurrency]);
 
   if (!isAuthenticated) {
-    return <Auth />;
+    return (
+        <>
+            <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+            <Auth />
+        </>
+    );
   }
 
   const isSaaSUser = user?.role === UserRole.SAAS_OWNER || user?.role === UserRole.SAAS_ADMIN;

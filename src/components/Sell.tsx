@@ -17,7 +17,7 @@ const Sell: React.FC = () => {
   const { user } = useAuth();
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [customerHistory, setCustomerHistory] = useState<LedgerEntry[]>([]);
-  const { transactions, products, customers, staff, updateProductStock, addEntity, addTransaction, promoCodes } = useData();
+  const { transactions, products, customers, staff, updateProductStock, addEntity, addTransaction, promoCodes, financialAccounts } = useData();
 
   const activeBusiness = useMemo(() => 
     user?.businesses?.find(b => b.name === user.businessName) || user?.businesses?.[0]
@@ -37,7 +37,7 @@ const Sell: React.FC = () => {
   const [invoiceDate, setInvoiceDate] = useState(() => new Date().toISOString().split('T')[0]);
   
   // Customer State
-  const [customerName, setCustomerName] = useState('Walk-in Customer');
+  const [customerName, setCustomerName] = useState(t('Walk-in Customer'));
   const [customerMobile, setCustomerMobile] = useState('');
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
   
@@ -186,7 +186,7 @@ const Sell: React.FC = () => {
       const existing = cart.find(item => item.id === product.id);
       if (existing) {
           if (existing.qty + 1 > product.stock) {
-              alert(`Insufficient stock! Max available: ${product.stock}`);
+              alert(`${t('Insufficient stock! Max available:')} ${product.stock}`);
               return;
           }
           setCart(cart.map(item => item.id === product.id ? {...item, qty: item.qty + 1} : item));
@@ -209,7 +209,7 @@ const Sell: React.FC = () => {
       if (newQty <= 0) {
           setCart(cart.filter(i => i.id !== id));
       } else if (newQty > item.stock) {
-          alert(`Max stock: ${item.stock}`);
+          alert(`${t('Max stock:')} ${item.stock}`);
       } else {
           setCart(cart.map(i => i.id === id ? { ...i, qty: newQty } : i));
       }
@@ -308,7 +308,7 @@ const Sell: React.FC = () => {
   };
 
   const finalizeTransaction = (finalId: string | null, finalName: string, finalMobile: string) => {
-        if (!finalId && finalName !== 'Walk-in Customer') {
+        if (!finalId && finalName !== t('Walk-in Customer')) {
             finalId = Date.now().toString();
             addEntity({
                 id: finalId,
@@ -350,6 +350,11 @@ const Sell: React.FC = () => {
             type: 'Sale',
             amount: grandTotal,
             paymentMethod: payments.length > 1 ? 'Partial' : (payments[0].method as any),
+            payments: payments.map(p => ({
+                method: p.method,
+                amount: p.amount,
+                accountId: financialAccounts.find(a => a.isDefault)?.id || financialAccounts[0]?.id
+            })),
             amountPaid: totalPaid,
             dueAmount: calculatedDue,
             previousDue: previousDue,
@@ -370,7 +375,7 @@ const Sell: React.FC = () => {
           })),
           details: { subtotal, discount: totalDiscount, tax, delivery: miscAmount },
           timeline: [
-            { status: 'Order Created', date: new Date().toISOString(), user: user?.name, note: 'Sale processed via POS' }
+            { status: t('Order Created'), date: new Date().toISOString(), user: user?.name, note: t('Sale processed via POS') }
           ]
       };
 
@@ -383,11 +388,11 @@ const Sell: React.FC = () => {
       
       // Reset
       setCart([]);
-      setCustomerName('Walk-in Customer');
+      setCustomerName(t('Walk-in Customer'));
       setCustomerMobile('');
       setSelectedCustomerId(null);
       setPayments([{method: 'Cash', amount: 0}]);
-      setSalesperson(user?.name || '');
+      setSalesperson(user?.name || t('Counter'));
       setDiscount(0);
       setCouponCode('');
       setTax(0);
@@ -545,11 +550,11 @@ const Sell: React.FC = () => {
                                 <input 
                                     type="text"
                                     value={customerName}
-                                    onFocus={() => customerName === 'Walk-in Customer' && setCustomerName('')}
+                                    onFocus={() => customerName === t('Walk-in Customer') && setCustomerName('')}
                                     onChange={(e) => handleNameChange(e.target.value)}
-                                    onBlur={() => !customerName.trim() && setCustomerName('Walk-in Customer')}
+                                    onBlur={() => !customerName.trim() && setCustomerName(t('Walk-in Customer'))}
                                     className="w-full px-3 py-3 text-sm outline-none font-medium text-slate-900 placeholder:text-slate-400 bg-transparent"
-                                    placeholder="Name or Mobile"
+                                    placeholder={t('Name or Mobile')}
                                 />
                                 {selectedCustomerId && (
                                     <button 
@@ -578,7 +583,7 @@ const Sell: React.FC = () => {
                             )}
                         </div>
 
-                            {(customerName !== 'Walk-in Customer' || customerMobile) && (
+                            {(customerName !== t('Walk-in Customer') || customerMobile) && (
                                 <div className="space-y-2">
                                     <input 
                                         type="tel"
@@ -615,13 +620,13 @@ const Sell: React.FC = () => {
                                                 onChange={e => handleUpdatePayment(idx, 'method', e.target.value)}
                                                 className="flex-1 px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-slate-900 font-bold"
                                             >
-                                                <option value="Cash">Cash</option>
-                                                <option value="Card">Card</option>
-                                                <option value="Mobile Banking">Mobile Banking</option>
-                                                <option value="Gift Card">Gift Card</option>
-                                                <option value="Due">Due / Credit</option>
-                                                <option value="Bank Transfer">Bank Transfer</option>
-                                                <option value="Installment">Installment</option>
+                                                <option value="Cash">{t('Cash')}</option>
+                                                <option value="Card">{t('Card')}</option>
+                                                <option value="Mobile Banking">{t('Mobile Banking')}</option>
+                                                <option value="Gift Card">{t('Gift Card')}</option>
+                                                <option value="Due">{t('Due / Credit')}</option>
+                                                <option value="Bank Transfer">{t('Bank Transfer')}</option>
+                                                <option value="Installment">{t('Installment')}</option>
                                             </select>
                                             <div className="flex-[1.5] flex items-center bg-white border border-slate-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500">
                                                 <span className="pl-2 text-slate-500 text-[10px] font-bold">{currencySymbol}</span>
@@ -698,8 +703,8 @@ const Sell: React.FC = () => {
                                                 onChange={e => setInstallmentFrequency(e.target.value as any)}
                                                 className="w-full p-2 text-xs border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 font-bold"
                                             >
-                                                <option value="Monthly">Monthly</option>
-                                                <option value="Weekly">Weekly</option>
+                                                <option value="Monthly">{t('Monthly')}</option>
+                                                <option value="Weekly">{t('Weekly')}</option>
                                             </select>
                                         </div>
                                     </div>
@@ -717,8 +722,8 @@ const Sell: React.FC = () => {
                                     {/* Schedule Preview */}
                                     <div className="mt-3 bg-white rounded-lg border border-indigo-100 overflow-hidden">
                                         <div className="bg-indigo-100 px-3 py-2 text-[10px] font-bold text-indigo-800 uppercase flex justify-between">
-                                            <span>Date</span>
-                                            <span>Amount</span>
+                                            <span>{t('Date')}</span>
+                                            <span>{t('Amount')}</span>
                                         </div>
                                         <div className="max-h-32 overflow-y-auto">
                                             {Array.from({ length: installmentCount }).map((_, i) => {
@@ -744,7 +749,7 @@ const Sell: React.FC = () => {
                         {isDueError && (
                             <div className="bg-red-50 text-red-700 text-xs p-3 rounded-lg flex items-start gap-2 font-bold animate-in slide-in-from-top-1 border border-red-100">
                                 <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                                {t('Due/Partial sale এর জন্য কাস্টমার সিলেক্ট করা বাধ্যতামূলক')}
+                                {t('Customer selection is mandatory for Due/Partial sales')}
                             </div>
                         )}
                     </div>
@@ -754,7 +759,7 @@ const Sell: React.FC = () => {
                     {cart.length === 0 ? (
                         <div className="h-full flex flex-col items-center justify-center text-slate-400 opacity-60">
                             <ShoppingBag className="w-16 h-16 mb-4 stroke-1" />
-                            <p>Cart is empty</p>
+                            <p>{t('Cart is empty')}</p>
                         </div>
                     ) : (
                         <div className="space-y-3">

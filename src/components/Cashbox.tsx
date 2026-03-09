@@ -159,7 +159,7 @@ const Cashbox: React.FC = () => {
                     onClick={() => setShowAddAccountModal(true)}
                     className="bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 flex items-center gap-2 font-medium"
                 >
-                    <Plus className="w-4 h-4" /> Add Account
+                    <Plus className="w-4 h-4" /> {t('Add Account')}
                </button>
            </div>
        </div>
@@ -169,7 +169,7 @@ const Cashbox: React.FC = () => {
           <div className="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-xl p-5 text-white shadow-lg shadow-indigo-200">
              <div className="flex items-center gap-2 mb-1 opacity-80">
                 <DollarSign className="w-4 h-4" />
-                <span className="text-xs font-bold uppercase tracking-wider">Total Liquidity</span>
+                <span className="text-xs font-bold uppercase tracking-wider">{t('Total Liquidity')}</span>
              </div>
              <h2 className="text-2xl font-bold">{formatMoney(grandTotal)}</h2>
           </div>
@@ -177,7 +177,7 @@ const Cashbox: React.FC = () => {
           <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
              <div className="flex items-center gap-2 mb-1 text-slate-500">
                 <Wallet className="w-4 h-4 text-emerald-500" />
-                <span className="text-xs font-bold uppercase tracking-wider">Cash in Hand</span>
+                <span className="text-xs font-bold uppercase tracking-wider">{t('Cash in Hand')}</span>
              </div>
              <h2 className="text-2xl font-bold text-slate-800">{formatMoney(totalCash)}</h2>
           </div>
@@ -185,7 +185,7 @@ const Cashbox: React.FC = () => {
           <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
              <div className="flex items-center gap-2 mb-1 text-slate-500">
                 <Landmark className="w-4 h-4 text-blue-500" />
-                <span className="text-xs font-bold uppercase tracking-wider">Bank Balance</span>
+                <span className="text-xs font-bold uppercase tracking-wider">{t('Bank Balance')}</span>
              </div>
              <h2 className="text-2xl font-bold text-slate-800">{formatMoney(totalBank)}</h2>
           </div>
@@ -193,7 +193,7 @@ const Cashbox: React.FC = () => {
           <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
              <div className="flex items-center gap-2 mb-1 text-slate-500">
                 <Smartphone className="w-4 h-4 text-pink-500" />
-                <span className="text-xs font-bold uppercase tracking-wider">Mobile Wallet</span>
+                <span className="text-xs font-bold uppercase tracking-wider">{t('Mobile Wallet')}</span>
              </div>
              <h2 className="text-2xl font-bold text-slate-800">{formatMoney(totalMobile)}</h2>
           </div>
@@ -204,7 +204,7 @@ const Cashbox: React.FC = () => {
            {/* Accounts List */}
            <div className="space-y-4">
                <div className="flex items-center justify-between">
-                   <h3 className="font-bold text-slate-800">Your Accounts</h3>
+                   <h3 className="font-bold text-slate-800">{t('Your Accounts')}</h3>
                </div>
                <div className="space-y-3">
                    <div 
@@ -212,7 +212,7 @@ const Cashbox: React.FC = () => {
                         className={`p-4 rounded-xl border cursor-pointer transition-all ${activeAccountId === 'all' ? 'bg-slate-800 text-white border-slate-800 shadow-md' : 'bg-white border-slate-200 hover:border-slate-300 text-slate-700'}`}
                    >
                        <div className="flex justify-between items-center">
-                           <span className="font-bold text-sm">All Accounts</span>
+                           <span className="font-bold text-sm">{t('All Accounts')}</span>
                            <span className="font-mono">{formatMoney(grandTotal)}</span>
                        </div>
                    </div>
@@ -242,12 +242,12 @@ const Cashbox: React.FC = () => {
            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col h-[600px]">
                <div className="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center rounded-t-xl">
                    <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                       Transaction History 
+                       {t('Transaction History')} 
                        <span className="text-xs font-normal text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">
-                           {activeAccountId === 'all' ? 'All Accounts' : financialAccounts.find(a=>a.id===activeAccountId)?.name}
+                           {activeAccountId === 'all' ? t('All Accounts') : financialAccounts.find(a=>a.id===activeAccountId)?.name}
                        </span>
                    </h3>
-                   <div className="text-xs text-slate-500">{filteredTransactions.length} records</div>
+                   <div className="text-xs text-slate-500">{filteredTransactions.length} {t('records')}</div>
                </div>
                <div className="flex-1 overflow-y-auto p-0">
                    <table className="w-full text-sm text-left">
@@ -323,24 +323,24 @@ const Cashbox: React.FC = () => {
            <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
                <div className="bg-white rounded-xl shadow-xl w-full max-w-sm animate-in fade-in zoom-in duration-200">
                    <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                       <h3 className="font-bold text-slate-800">Record Income / Expense</h3>
+                       <h3 className="font-bold text-slate-800">{t('Record Income / Expense')}</h3>
                        <button onClick={() => setShowAddTxModal(false)}><X className="w-5 h-5 text-slate-400" /></button>
                    </div>
                    <form onSubmit={handleSaveTx} className="p-6 space-y-4">
                        <div className="flex bg-slate-100 p-1 rounded-lg">
-                           <button type="button" onClick={() => setTxForm({...txForm, type: 'Income'})} className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${txForm.type === 'Income' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-500'}`}>Income</button>
-                           <button type="button" onClick={() => setTxForm({...txForm, type: 'Expense'})} className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${txForm.type === 'Expense' ? 'bg-white shadow-sm text-red-600' : 'text-slate-500'}`}>Expense</button>
+                           <button type="button" onClick={() => setTxForm({...txForm, type: 'Income'})} className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${txForm.type === 'Income' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-500'}`}>{t('Income')}</button>
+                           <button type="button" onClick={() => setTxForm({...txForm, type: 'Expense'})} className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${txForm.type === 'Expense' ? 'bg-white shadow-sm text-red-600' : 'text-slate-500'}`}>{t('Expense')}</button>
                        </div>
                        
                        <div>
-                           <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Account</label>
+                           <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">{t('Account')}</label>
                            <select 
                                 value={txForm.accountId} 
                                 onChange={e => setTxForm({...txForm, accountId: e.target.value})}
                                 className="w-full border p-2 rounded-lg bg-white"
                                 required
                            >
-                               <option value="">Select Account...</option>
+                               <option value="">{t('Select Account...')}</option>
                                {financialAccounts.map(a => <option key={a.id} value={a.id}>{a.name} ({formatMoney(a.balance)})</option>)}
                            </select>
                        </div>
@@ -352,7 +352,7 @@ const Cashbox: React.FC = () => {
 
                        <div>
                            <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">{t('Description')}</label>
-                           <input type="text" value={txForm.description} onChange={e => setTxForm({...txForm, description: e.target.value})} className="w-full border p-2 rounded-lg" placeholder="e.g. Utility Bill" required />
+                           <input type="text" value={txForm.description} onChange={e => setTxForm({...txForm, description: e.target.value})} className="w-full border p-2 rounded-lg" placeholder={t('e.g. Utility Bill')} required />
                        </div>
 
                        <button className="w-full bg-slate-900 text-white py-3 rounded-lg font-bold">{t('Save')}</button>
@@ -371,7 +371,7 @@ const Cashbox: React.FC = () => {
                    </div>
                    <form onSubmit={handleUpdate} className="p-6 space-y-4">
                        <div>
-                           <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Entity / Description</label>
+                           <label className="block text-xs font-bold text-slate-500 uppercase mb-1">{t('Entity / Description')}</label>
                            <input 
                                 type="text" 
                                 value={editingTx.entityName}
@@ -397,7 +397,7 @@ const Cashbox: React.FC = () => {
                                 className="w-full border p-2 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
                            />
                        </div>
-                       <button className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700">Update Transaction</button>
+                       <button className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700">{t('Update Transaction')}</button>
                    </form>
                </div>
            </div>
@@ -408,33 +408,33 @@ const Cashbox: React.FC = () => {
            <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
                <div className="bg-white rounded-xl shadow-xl w-full max-w-sm animate-in fade-in zoom-in duration-200">
                    <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                       <h3 className="font-bold text-slate-800">Add Financial Account</h3>
+                       <h3 className="font-bold text-slate-800">{t('Add Financial Account')}</h3>
                        <button onClick={() => setShowAddAccountModal(false)}><X className="w-5 h-5 text-slate-400" /></button>
                    </div>
                    <form onSubmit={handleCreateAccount} className="p-6 space-y-4">
                        <div>
-                           <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Account Name</label>
-                           <input type="text" value={accForm.name} onChange={e => setAccForm({...accForm, name: e.target.value})} className="w-full border p-2 rounded-lg" placeholder="e.g. BRAC Bank" required />
+                           <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">{t('Account Name')}</label>
+                           <input type="text" value={accForm.name} onChange={e => setAccForm({...accForm, name: e.target.value})} className="w-full border p-2 rounded-lg" placeholder={t('e.g. BRAC Bank')} required />
                        </div>
                        <div>
-                           <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Type</label>
+                           <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">{t('Type')}</label>
                            <select value={accForm.type} onChange={e => setAccForm({...accForm, type: e.target.value as any})} className="w-full border p-2 rounded-lg bg-white">
-                               <option value="Cash">Cash</option>
-                               <option value="Bank">Bank</option>
-                               <option value="Mobile Wallet">Mobile Wallet</option>
+                               <option value="Cash">{t('Cash')}</option>
+                               <option value="Bank">{t('Bank')}</option>
+                               <option value="Mobile Wallet">{t('Mobile Wallet')}</option>
                            </select>
                        </div>
                        {accForm.type === 'Bank' && (
                            <div>
-                               <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Account Number</label>
+                               <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">{t('Account Number')}</label>
                                <input type="text" value={accForm.accountNumber} onChange={e => setAccForm({...accForm, accountNumber: e.target.value})} className="w-full border p-2 rounded-lg" />
                            </div>
                        )}
                        <div>
-                           <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Opening Balance</label>
+                           <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">{t('Opening Balance')}</label>
                            <input type="number" value={accForm.balance} onChange={e => setAccForm({...accForm, balance: parseFloat(e.target.value)})} className="w-full border p-2 rounded-lg" />
                        </div>
-                       <button className="w-full bg-slate-900 text-white py-3 rounded-lg font-bold">Create Account</button>
+                       <button className="w-full bg-slate-900 text-white py-3 rounded-lg font-bold">{t('Create Account')}</button>
                    </form>
                </div>
            </div>
@@ -445,19 +445,19 @@ const Cashbox: React.FC = () => {
            <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
                <div className="bg-white rounded-xl shadow-xl w-full max-w-sm animate-in fade-in zoom-in duration-200">
                    <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                       <h3 className="font-bold text-slate-800">Transfer Funds (Contra)</h3>
+                       <h3 className="font-bold text-slate-800">{t('Transfer Funds (Contra)')}</h3>
                        <button onClick={() => setShowTransferModal(false)}><X className="w-5 h-5 text-slate-400" /></button>
                    </div>
                    <form onSubmit={handleTransfer} className="p-6 space-y-4">
                        <div>
-                           <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">From Account</label>
+                           <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">{t('From Account')}</label>
                            <select 
                                 value={transferForm.fromId} 
                                 onChange={e => setTransferForm({...transferForm, fromId: e.target.value})}
                                 className="w-full border p-2 rounded-lg bg-white"
                                 required
                            >
-                               <option value="">Select Source...</option>
+                               <option value="">{t('Select Source...')}</option>
                                {financialAccounts.map(a => <option key={a.id} value={a.id}>{a.name} ({formatMoney(a.balance)})</option>)}
                            </select>
                        </div>
@@ -467,14 +467,14 @@ const Cashbox: React.FC = () => {
                        </div>
 
                        <div>
-                           <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">To Account</label>
+                           <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">{t('To Account')}</label>
                            <select 
                                 value={transferForm.toId} 
                                 onChange={e => setTransferForm({...transferForm, toId: e.target.value})}
                                 className="w-full border p-2 rounded-lg bg-white"
                                 required
                            >
-                               <option value="">Select Destination...</option>
+                               <option value="">{t('Select Destination...')}</option>
                                {financialAccounts.map(a => <option key={a.id} value={a.id}>{a.name} ({formatMoney(a.balance)})</option>)}
                            </select>
                        </div>
@@ -485,11 +485,11 @@ const Cashbox: React.FC = () => {
                        </div>
 
                        <div>
-                           <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Note</label>
-                           <input type="text" value={transferForm.note} onChange={e => setTransferForm({...transferForm, note: e.target.value})} className="w-full border p-2 rounded-lg" placeholder="Optional" />
+                           <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">{t('Note')}</label>
+                           <input type="text" value={transferForm.note} onChange={e => setTransferForm({...transferForm, note: e.target.value})} className="w-full border p-2 rounded-lg" placeholder={t('Optional')} />
                        </div>
 
-                       <button className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700">Confirm Transfer</button>
+                       <button className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700">{t('Confirm Transfer')}</button>
                    </form>
                </div>
            </div>

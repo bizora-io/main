@@ -12,7 +12,7 @@ interface InvoiceTemplateProps {
 }
 
 const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
-    const { formatMoney, invoiceTemplateId, invoiceConfig } = useSettings();
+    const { formatMoney, invoiceTemplateId, invoiceConfig, t } = useSettings();
     const { user } = useAuth();
     const { domainSettings } = useData();
     const navigate = useNavigate();
@@ -57,7 +57,7 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
             )}
             {item.warranty && (
                 <p className="text-[10px] text-emerald-600 flex items-center gap-1">
-                    <ShieldCheck className="w-3 h-3" /> Warranty: {item.warranty}
+                    <ShieldCheck className="w-3 h-3" /> {t('Warranty')}: {item.warranty}
                 </p>
             )}
         </div>
@@ -68,17 +68,17 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
         if (!data.installments || data.installments.length === 0) return null;
         return (
             <div className="mt-4 pt-4 border-t border-slate-100">
-                <h4 className="font-bold text-slate-800 mb-2 text-xs uppercase tracking-wider">Installment Plan</h4>
+                <h4 className="font-bold text-slate-800 mb-2 text-xs uppercase tracking-wider">{t('Installment Plan')}</h4>
                 <div className="grid grid-cols-3 gap-2 text-xs font-medium text-slate-600 bg-slate-50 p-2 rounded mb-1">
-                    <span>Due Date</span>
-                    <span className="text-center">Status</span>
-                    <span className="text-right">Amount</span>
+                    <span>{t('Due Date')}</span>
+                    <span className="text-center">{t('Status')}</span>
+                    <span className="text-right">{t('Amount')}</span>
                 </div>
                 <div className="space-y-1">
                     {data.installments.map((inst, i) => (
                         <div key={i} className="grid grid-cols-3 gap-2 text-xs border-b border-slate-50 pb-1 last:border-0">
                             <span>{inst.dueDate}</span>
-                            <span className={`text-center ${inst.status === 'Paid' ? 'text-emerald-600' : 'text-amber-600'}`}>{inst.status}</span>
+                            <span className={`text-center ${inst.status === 'Paid' ? 'text-emerald-600' : 'text-amber-600'}`}>{t(inst.status)}</span>
                             <span className="text-right font-mono">{formatMoney(inst.amount)}</span>
                         </div>
                     ))}
@@ -91,32 +91,32 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
     const OrderExtras = () => (
         <div className="mt-8 pt-6 border-t border-slate-100 text-sm text-slate-600 space-y-2">
             {data.salesperson && (
-                <p><span className="font-bold text-slate-800">Salesperson:</span> {data.salesperson}</p>
+                <p><span className="font-bold text-slate-800">{t('Salesperson')}:</span> {data.salesperson}</p>
             )}
             {data.notes && (
-                <p><span className="font-bold text-slate-800">Notes:</span> {data.notes}</p>
+                <p><span className="font-bold text-slate-800">{t('Notes')}:</span> {data.notes}</p>
             )}
             {data.deliveryInstructions && (
-                <p><span className="font-bold text-slate-800">Delivery Instructions:</span> {data.deliveryInstructions}</p>
+                <p><span className="font-bold text-slate-800">{t('Delivery Instructions')}:</span> {data.deliveryInstructions}</p>
             )}
             {data.tags && data.tags.length > 0 && (
-                <p><span className="font-bold text-slate-800">Tags:</span> {data.tags.join(', ')}</p>
+                <p><span className="font-bold text-slate-800">{t('Tags')}:</span> {data.tags.join(', ')}</p>
             )}
 
             <InstallmentSchedule />
 
             {/* Order Timeline */}
             <div className="mt-4 pt-4 border-t border-slate-100">
-                <h4 className="font-bold text-slate-800 mb-2">Order Timeline</h4>
+                <h4 className="font-bold text-slate-800 mb-2">{t('Order Timeline')}</h4>
                 <div className="space-y-3 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-300 before:to-transparent">
                     <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
                         <div className="flex items-center justify-center w-4 h-4 rounded-full border-2 border-white bg-indigo-500 text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2"></div>
                         <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-2 rounded border border-slate-100 bg-slate-50 shadow-sm">
                             <div className="flex items-center justify-between space-x-2 mb-1">
-                                <div className="font-bold text-slate-900 text-xs">Order Created</div>
+                                <div className="font-bold text-slate-900 text-xs">{t('Order Created')}</div>
                                 <time className="font-medium text-indigo-500 text-[10px]">{data.date}</time>
                             </div>
-                            <div className="text-slate-500 text-[10px]">Created by {data.createdBy || 'System'}</div>
+                            <div className="text-slate-500 text-[10px]">{t('Created by')} {data.createdBy || t('System')}</div>
                         </div>
                     </div>
                     {data.paymentMethod !== 'Due' && (
@@ -124,10 +124,10 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
                             <div className="flex items-center justify-center w-4 h-4 rounded-full border-2 border-white bg-emerald-500 text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2"></div>
                             <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-2 rounded border border-slate-100 bg-slate-50 shadow-sm">
                                 <div className="flex items-center justify-between space-x-2 mb-1">
-                                    <div className="font-bold text-slate-900 text-xs">Payment Received</div>
+                                    <div className="font-bold text-slate-900 text-xs">{t('Payment Received')}</div>
                                     <time className="font-medium text-emerald-500 text-[10px]">{data.date}</time>
                                 </div>
-                                <div className="text-slate-500 text-[10px]">Method: {data.paymentMethod}</div>
+                                <div className="text-slate-500 text-[10px]">{t('Method')}: {t(data.paymentMethod || '')}</div>
                             </div>
                         </div>
                     )}
@@ -161,14 +161,14 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
             {invoiceConfig.showSeal && (
                 <div className="text-center">
                     <div className="w-24 h-24 border-2 border-slate-300 rounded-full flex items-center justify-center text-slate-300 text-xs font-bold uppercase rotate-12 mb-2">
-                        Official Seal
+                        {t('Official Seal')}
                     </div>
                 </div>
             )}
             {invoiceConfig.showSignature && (
                 <div className="text-center">
                     <div className="w-48 border-b border-slate-800 mb-2"></div>
-                    <p className="text-xs text-slate-500 font-bold uppercase">Authorised Signature</p>
+                    <p className="text-xs text-slate-500 font-bold uppercase">{t('Authorised Signature')}</p>
                 </div>
             )}
         </div>
@@ -192,11 +192,11 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
                     </div>
                 </div>
                 <div className="text-left md:text-right">
-                    <h2 className="text-3xl font-light text-slate-300 mb-2 uppercase tracking-widest">Invoice</h2>
+                    <h2 className="text-3xl font-light text-slate-300 mb-2 uppercase tracking-widest">{t('Invoice')}</h2>
                     <p className="font-bold text-slate-700 text-lg">#{data.reference || data.id.slice(-6).toUpperCase()}</p>
-                    <p className="text-sm text-slate-500 mt-1">Date: {data.date}</p>
+                    <p className="text-sm text-slate-500 mt-1">{t('Date')}: {data.date}</p>
                     <div className="mt-2 inline-block px-3 py-1 bg-slate-100 rounded text-xs font-bold text-slate-600 uppercase">
-                        {data.paymentMethod}
+                        {t(data.paymentMethod || '')}
                     </div>
                 </div>
             </div>
@@ -204,7 +204,7 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
             {/* Address Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
                 <div>
-                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Billed To</h3>
+                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">{t('Billed To')}</h3>
                     <p className="text-lg font-bold text-slate-800">{data.entityName}</p>
                     <div className="text-sm text-slate-500 mt-2 space-y-1">
                         {data.entityMobile && <p className="flex items-center gap-2"><Phone className="w-3 h-3"/> {data.entityMobile}</p>}
@@ -218,10 +218,10 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
                 <table className="w-full mb-8">
                     <thead>
                         <tr className="border-b-2 border-slate-100">
-                            <th className="py-3 px-2 text-left font-bold text-slate-600 text-sm uppercase tracking-wide">Item</th>
-                            <th className="py-3 px-2 text-center font-bold text-slate-600 text-sm uppercase tracking-wide">Qty</th>
-                            <th className="py-3 px-2 text-right font-bold text-slate-600 text-sm uppercase tracking-wide">Price</th>
-                            <th className="py-3 px-2 text-right font-bold text-slate-600 text-sm uppercase tracking-wide">Total</th>
+                            <th className="py-3 px-2 text-left font-bold text-slate-600 text-sm uppercase tracking-wide">{t('Item')}</th>
+                            <th className="py-3 px-2 text-center font-bold text-slate-600 text-sm uppercase tracking-wide">{t('Qty')}</th>
+                            <th className="py-3 px-2 text-right font-bold text-slate-600 text-sm uppercase tracking-wide">{t('Price')}</th>
+                            <th className="py-3 px-2 text-right font-bold text-slate-600 text-sm uppercase tracking-wide">{t('Total')}</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
@@ -244,50 +244,50 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
             <div className="flex flex-col md:flex-row justify-end border-t border-slate-100 pt-8">
                 <div className="w-full md:w-72 space-y-3">
                     <div className="flex justify-between text-slate-600 text-sm">
-                        <span>Subtotal</span>
+                        <span>{t('Subtotal')}</span>
                         <span className="font-medium">{formatMoney(data.details?.subtotal || data.amount)}</span>
                     </div>
                     {data.details?.tax ? (
                         <div className="flex justify-between text-slate-600 text-sm">
-                            <span>Tax</span>
+                            <span>{t('Tax')}</span>
                             <span className="font-medium">{formatMoney(data.details.tax)}</span>
                         </div>
                     ) : null}
                     {data.details?.discount ? (
                         <div className="flex justify-between text-emerald-600 text-sm">
-                            <span>Discount</span>
+                            <span>{t('Discount')}</span>
                             <span className="font-medium">-{formatMoney(data.details.discount)}</span>
                         </div>
                     ) : null}
                     
                     <div className="flex justify-between items-end border-t border-slate-200 pt-4 mt-2">
-                        <span className="text-base font-bold text-slate-800">Current Bill</span>
+                        <span className="text-base font-bold text-slate-800">{t('Current Bill')}</span>
                         <span className="text-xl font-bold text-indigo-600">{formatMoney(data.amount)}</span>
                     </div>
 
                     {data.previousDue !== undefined && data.previousDue > 0 && (
                         <div className="flex justify-between text-slate-600 text-sm mt-2">
-                            <span>Previous Due</span>
+                            <span>{t('Previous Due')}</span>
                             <span className="font-medium">{formatMoney(data.previousDue)}</span>
                         </div>
                     )}
 
                     {(data.previousDue !== undefined && data.previousDue > 0) && (
                         <div className="flex justify-between text-slate-800 text-sm font-bold mt-1 border-t border-dashed border-slate-200 pt-2">
-                            <span>Total Payable</span>
+                            <span>{t('Total Payable')}</span>
                             <span>{formatMoney(data.amount + (data.previousDue || 0))}</span>
                         </div>
                     )}
 
                     {data.amountPaid !== undefined && (
                         <div className="flex justify-between text-slate-600 text-sm mt-2">
-                            <span>Paid Amount</span>
+                            <span>{t('Paid Amount')}</span>
                             <span className="font-medium">{formatMoney(data.amountPaid)}</span>
                         </div>
                     )}
                     
                     <div className={`flex justify-between text-sm font-bold mt-1 ${(data.dueAmount || 0) + (data.previousDue || 0) > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-                        <span>Total Due</span>
+                        <span>{t('Total Due')}</span>
                         <span>{formatMoney((data.dueAmount || 0) + (data.previousDue || 0))}</span>
                     </div>
                 </div>
@@ -317,7 +317,7 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
                         {taxNumber && <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">Tax ID: {taxNumber}</p>}
                     </div>
                     <div className="text-right">
-                        <h2 className="text-5xl font-bold text-indigo-50 mb-2 leading-none">INVOICE</h2>
+                        <h2 className="text-5xl font-bold text-indigo-50 mb-2 leading-none uppercase">{t('Invoice')}</h2>
                         <div className="flex flex-col md:items-end">
                             <span className="text-sm font-bold text-indigo-600">#{data.reference || data.id.slice(-6).toUpperCase()}</span>
                             <span className="text-sm text-slate-500">{data.date}</span>
@@ -328,7 +328,7 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
                 {/* Client Info Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 bg-slate-50 p-6 rounded-xl border border-slate-100">
                     <div>
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Billed To</span>
+                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">{t('Billed To')}</span>
                         <h3 className="text-lg font-bold text-slate-800">{data.entityName}</h3>
                         <div className="text-sm text-slate-500 mt-1 space-y-0.5">
                             {data.entityAddress && <p>{data.entityAddress}</p>}
@@ -336,10 +336,10 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
                         </div>
                     </div>
                     <div className="md:text-right">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Payment Details</span>
+                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">{t('Payment Details')}</span>
                         <div className="space-y-1">
-                            <p className="text-sm font-medium text-slate-700"><span className="text-slate-400 mr-2">Method:</span> {data.paymentMethod}</p>
-                            <p className="text-sm font-medium text-slate-700"><span className="text-slate-400 mr-2">Status:</span> Paid</p>
+                            <p className="text-sm font-medium text-slate-700"><span className="text-slate-400 mr-2">{t('Method')}:</span> {t(data.paymentMethod || '')}</p>
+                            <p className="text-sm font-medium text-slate-700"><span className="text-slate-400 mr-2">{t('Status')}:</span> {t('Paid')}</p>
                         </div>
                     </div>
                 </div>
@@ -349,10 +349,10 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
                     <table className="w-full mb-8">
                         <thead>
                             <tr className="text-indigo-900 border-b-2 border-indigo-100">
-                                <th className="py-3 px-2 text-left font-bold text-sm">Description</th>
-                                <th className="py-3 px-2 text-center font-bold text-sm">Qty</th>
-                                <th className="py-3 px-2 text-right font-bold text-sm">Rate</th>
-                                <th className="py-3 px-2 text-right font-bold text-sm">Amount</th>
+                                <th className="py-3 px-2 text-left font-bold text-sm">{t('Description')}</th>
+                                <th className="py-3 px-2 text-center font-bold text-sm">{t('Qty')}</th>
+                                <th className="py-3 px-2 text-right font-bold text-sm">{t('Rate')}</th>
+                                <th className="py-3 px-2 text-right font-bold text-sm">{t('Amount')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-indigo-50">
@@ -375,49 +375,49 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
                 <div className="flex justify-end">
                     <div className="bg-slate-900 text-white p-6 rounded-xl w-full md:w-80 shadow-lg">
                         <div className="flex justify-between mb-2 text-sm text-slate-300">
-                            <span>Subtotal</span>
+                            <span>{t('Subtotal')}</span>
                             <span>{formatMoney(data.details?.subtotal || data.amount)}</span>
                         </div>
                         {data.details?.tax ? (
                             <div className="flex justify-between mb-2 text-sm text-slate-300">
-                                <span>Tax</span>
+                                <span>{t('Tax')}</span>
                                 <span>+ {formatMoney(data.details.tax)}</span>
                             </div>
                         ) : null}
                         {data.details?.discount ? (
                             <div className="flex justify-between mb-4 text-sm text-emerald-300">
-                                <span>Discount</span>
+                                <span>{t('Discount')}</span>
                                 <span>- {formatMoney(data.details.discount)}</span>
                             </div>
                         ) : null}
                         <div className="flex justify-between pt-4 border-t border-slate-700 items-end">
-                            <span className="font-bold text-lg">Current Bill</span>
+                            <span className="font-bold text-lg">{t('Current Bill')}</span>
                             <span className="font-bold text-xl">{formatMoney(data.amount)}</span>
                         </div>
 
                         {data.previousDue !== undefined && data.previousDue > 0 && (
                             <div className="flex justify-between mt-2 text-sm text-slate-300">
-                                <span>Previous Due</span>
+                                <span>{t('Previous Due')}</span>
                                 <span>{formatMoney(data.previousDue)}</span>
                             </div>
                         )}
 
                         {(data.previousDue !== undefined && data.previousDue > 0) && (
                             <div className="flex justify-between mt-2 pt-2 border-t border-slate-700 text-sm text-white font-bold">
-                                <span>Total Payable</span>
+                                <span>{t('Total Payable')}</span>
                                 <span>{formatMoney(data.amount + (data.previousDue || 0))}</span>
                             </div>
                         )}
 
                         {data.amountPaid !== undefined && (
                             <div className="flex justify-between mt-2 text-sm text-slate-300">
-                                <span>Paid Amount</span>
+                                <span>{t('Paid Amount')}</span>
                                 <span>{formatMoney(data.amountPaid)}</span>
                             </div>
                         )}
                         
                         <div className={`flex justify-between mt-1 text-sm font-bold ${(data.dueAmount || 0) + (data.previousDue || 0) > 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-                            <span>Total Due</span>
+                            <span>{t('Total Due')}</span>
                             <span>{formatMoney((data.dueAmount || 0) + (data.previousDue || 0))}</span>
                         </div>
                     </div>
@@ -435,20 +435,20 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
             <div className="border-b-4 border-slate-900 pb-8 mb-12 flex justify-between items-end">
                 <div>
                     <Logo />
-                    <h1 className="text-4xl font-bold text-slate-900 tracking-tight">INVOICE</h1>
+                    <h1 className="text-4xl font-bold text-slate-900 tracking-tight uppercase">{t('Invoice')}</h1>
                     <p className="text-slate-500 font-medium mt-1">#{data.reference || data.id}</p>
                 </div>
                 <div className="text-right">
                     <h2 className="text-xl font-bold text-slate-900">{businessName}</h2>
                     <p className="text-sm text-slate-500">{businessAddress}</p>
                     <p className="text-sm text-slate-500">{businessPhone}</p>
-                    {taxNumber && <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">Tax ID: {taxNumber}</p>}
+                    {taxNumber && <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">{t('Tax ID')}: {taxNumber}</p>}
                 </div>
             </div>
 
             <div className="flex flex-col md:flex-row gap-12 mb-16">
                 <div className="flex-1">
-                    <h3 className="text-xs font-bold text-slate-900 uppercase mb-4 border-b border-slate-200 pb-2">Bill To</h3>
+                    <h3 className="text-xs font-bold text-slate-900 uppercase mb-4 border-b border-slate-200 pb-2">{t('Bill To')}</h3>
                     <p className="font-bold text-lg">{data.entityName}</p>
                     <div className="text-sm text-slate-600 mt-2 space-y-1">
                         {data.entityAddress && <p>{data.entityAddress}</p>}
@@ -456,15 +456,15 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
                     </div>
                 </div>
                 <div className="flex-1">
-                    <h3 className="text-xs font-bold text-slate-900 uppercase mb-4 border-b border-slate-200 pb-2">Details</h3>
+                    <h3 className="text-xs font-bold text-slate-900 uppercase mb-4 border-b border-slate-200 pb-2">{t('Details')}</h3>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                            <p className="text-slate-500">Invoice Date</p>
+                            <p className="text-slate-500">{t('Invoice Date')}</p>
                             <p className="font-medium">{data.date}</p>
                         </div>
                         <div>
-                            <p className="text-slate-500">Payment Mode</p>
-                            <p className="font-medium">{data.paymentMethod}</p>
+                            <p className="text-slate-500">{t('Payment Mode')}</p>
+                            <p className="font-medium">{t(data.paymentMethod || '')}</p>
                         </div>
                     </div>
                 </div>
@@ -473,10 +473,10 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
             <table className="w-full mb-12">
                 <thead>
                     <tr className="bg-slate-100 text-slate-900">
-                        <th className="py-3 px-4 text-left font-bold text-xs uppercase">Description</th>
-                        <th className="py-3 px-4 text-center font-bold text-xs uppercase">Qty</th>
-                        <th className="py-3 px-4 text-right font-bold text-xs uppercase">Unit Price</th>
-                        <th className="py-3 px-4 text-right font-bold text-xs uppercase">Amount</th>
+                        <th className="py-3 px-4 text-left font-bold text-xs uppercase">{t('Description')}</th>
+                        <th className="py-3 px-4 text-center font-bold text-xs uppercase">{t('Qty')}</th>
+                        <th className="py-3 px-4 text-right font-bold text-xs uppercase">{t('Unit Price')}</th>
+                        <th className="py-3 px-4 text-right font-bold text-xs uppercase">{t('Amount')}</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -497,49 +497,49 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
             <div className="flex justify-end">
                 <div className="w-64 border-t-2 border-slate-900 pt-4 space-y-2">
                     <div className="flex justify-between text-sm">
-                        <span className="font-medium text-slate-600">Subtotal</span>
+                        <span className="font-medium text-slate-600">{t('Subtotal')}</span>
                         <span className="font-bold">{formatMoney(data.details?.subtotal || data.amount)}</span>
                     </div>
                     {data.details?.tax ? (
                         <div className="flex justify-between text-sm">
-                            <span className="font-medium text-slate-600">Tax</span>
+                            <span className="font-medium text-slate-600">{t('Tax')}</span>
                             <span className="font-bold">{formatMoney(data.details.tax)}</span>
                         </div>
                     ) : null}
                     {data.details?.discount ? (
                         <div className="flex justify-between text-sm">
-                            <span className="font-medium text-slate-600">Discount</span>
+                            <span className="font-medium text-slate-600">{t('Discount')}</span>
                             <span className="font-bold">-{formatMoney(data.details.discount)}</span>
                         </div>
                     ) : null}
                     <div className="flex justify-between text-lg mt-4">
-                        <span className="font-black text-slate-900">Current Bill</span>
+                        <span className="font-black text-slate-900">{t('Current Bill')}</span>
                         <span className="font-black text-slate-900">{formatMoney(data.amount)}</span>
                     </div>
 
                     {data.previousDue !== undefined && data.previousDue > 0 && (
                         <div className="flex justify-between text-sm mt-2">
-                            <span className="font-medium text-slate-600">Previous Due</span>
+                            <span className="font-medium text-slate-600">{t('Previous Due')}</span>
                             <span className="font-bold">{formatMoney(data.previousDue)}</span>
                         </div>
                     )}
 
                     {(data.previousDue !== undefined && data.previousDue > 0) && (
                         <div className="flex justify-between text-sm mt-2 pt-2 border-t border-slate-200">
-                            <span className="font-black text-slate-900">Total Payable</span>
+                            <span className="font-black text-slate-900">{t('Total Payable')}</span>
                             <span className="font-black text-slate-900">{formatMoney(data.amount + (data.previousDue || 0))}</span>
                         </div>
                     )}
 
                     {data.amountPaid !== undefined && (
                         <div className="flex justify-between text-sm mt-2">
-                            <span className="font-medium text-slate-600">Paid Amount</span>
+                            <span className="font-medium text-slate-600">{t('Paid Amount')}</span>
                             <span className="font-bold">{formatMoney(data.amountPaid)}</span>
                         </div>
                     )}
                     
                     <div className={`flex justify-between text-sm ${(data.dueAmount || 0) + (data.previousDue || 0) > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-                        <span className="font-bold">Total Due</span>
+                        <span className="font-bold">{t('Total Due')}</span>
                         <span className="font-bold">{formatMoney((data.dueAmount || 0) + (data.previousDue || 0))}</span>
                     </div>
                 </div>
@@ -562,18 +562,18 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
                     <h1 className="text-4xl md:text-5xl font-black mb-8 md:mb-16 tracking-tighter uppercase break-words">{businessName}</h1>
                     
                     <div className="mb-8 md:mb-12">
-                        <h3 className="font-bold opacity-70 mb-2 uppercase text-xs tracking-wider">Billed To</h3>
+                        <h3 className="font-bold opacity-70 mb-2 uppercase text-xs tracking-wider">{t('Billed To')}</h3>
                         <p className="text-xl md:text-2xl font-bold leading-tight">{data.entityName}</p>
                         {data.entityMobile && <p className="opacity-90 mt-2 text-sm">{data.entityMobile}</p>}
                         {data.entityAddress && <p className="opacity-90 mt-1 text-sm">{data.entityAddress}</p>}
                     </div>
 
                     <div>
-                        <h3 className="font-bold opacity-70 mb-2 uppercase text-xs tracking-wider">Invoice Info</h3>
+                        <h3 className="font-bold opacity-70 mb-2 uppercase text-xs tracking-wider">{t('Invoice Info')}</h3>
                         <p className="font-medium text-lg">#{data.reference || data.id}</p>
                         <p className="opacity-80 text-sm mt-1">{data.date}</p>
                         <div className="mt-4 inline-block border border-white/30 rounded px-3 py-1 text-xs font-bold uppercase">
-                            {data.paymentMethod}
+                            {t(data.paymentMethod || '')}
                         </div>
                     </div>
                 </div>
@@ -581,7 +581,7 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
                 <div className="text-sm opacity-80 mt-8 md:mt-0">
                     <p>{businessWebsite}</p>
                     <p>{businessPhone}</p>
-                    {taxNumber && <p className="mt-1 font-bold">Tax ID: {taxNumber}</p>}
+                    {taxNumber && <p className="mt-1 font-bold">{t('Tax ID')}: {taxNumber}</p>}
                 </div>
             </div>
 
@@ -590,16 +590,16 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
                 <div className="flex-1">
                     <h2 className="text-2xl font-bold text-slate-800 mb-8 flex items-center gap-2">
                         <span className="w-8 h-1 bg-orange-500 rounded-full inline-block"></span> 
-                        Order Details
+                        {t('Order Details')}
                     </h2>
                     
                     <table className="w-full mb-12">
                         <thead>
                             <tr className="border-b-2 border-orange-100 text-orange-600">
-                                <th className="py-3 text-left font-bold text-sm">Item</th>
-                                <th className="py-3 text-center font-bold text-sm">Qty</th>
-                                <th className="py-3 text-right font-bold text-sm">Price</th>
-                                <th className="py-3 text-right font-bold text-sm">Total</th>
+                                <th className="py-3 text-left font-bold text-sm">{t('Item')}</th>
+                                <th className="py-3 text-center font-bold text-sm">{t('Qty')}</th>
+                                <th className="py-3 text-right font-bold text-sm">{t('Price')}</th>
+                                <th className="py-3 text-right font-bold text-sm">{t('Total')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-orange-50">
@@ -620,43 +620,43 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
 
                 <div className="bg-orange-50 p-8 rounded-2xl mb-8">
                     <div className="flex justify-between mb-2">
-                        <span className="text-slate-600 font-medium">Subtotal</span>
+                        <span className="text-slate-600 font-medium">{t('Subtotal')}</span>
                         <span className="font-bold text-slate-800">{formatMoney(data.details?.subtotal || data.amount)}</span>
                     </div>
                     {data.details?.tax || data.details?.discount ? (
                         <div className="flex justify-between mb-4 pb-4 border-b border-orange-200 text-sm text-slate-500">
-                            <span>Adjustments (Tax/Disc)</span>
+                            <span>{t('Adjustments (Tax/Disc)')}</span>
                             <span>{formatMoney((data.details?.tax||0) - (data.details?.discount||0))}</span>
                         </div>
                     ) : null}
                     <div className="flex justify-between items-center pt-2 md:pt-0">
-                        <span className="text-xl font-bold text-orange-600">Current Bill</span>
+                        <span className="text-xl font-bold text-orange-600">{t('Current Bill')}</span>
                         <span className="text-2xl font-black text-slate-900">{formatMoney(data.amount)}</span>
                     </div>
 
                     {data.previousDue !== undefined && data.previousDue > 0 && (
                         <div className="flex justify-between mt-2 text-sm text-slate-600">
-                            <span>Previous Due</span>
+                            <span>{t('Previous Due')}</span>
                             <span className="font-bold">{formatMoney(data.previousDue)}</span>
                         </div>
                     )}
 
                     {(data.previousDue !== undefined && data.previousDue > 0) && (
                         <div className="flex justify-between mt-2 pt-2 border-t border-orange-200 text-lg font-black text-slate-900">
-                            <span>Total Payable</span>
+                            <span>{t('Total Payable')}</span>
                             <span>{formatMoney(data.amount + (data.previousDue || 0))}</span>
                         </div>
                     )}
 
                     {data.amountPaid !== undefined && (
                         <div className="flex justify-between mt-2 text-sm text-slate-600">
-                            <span>Paid Amount</span>
+                            <span>{t('Paid Amount')}</span>
                             <span className="font-bold">{formatMoney(data.amountPaid)}</span>
                         </div>
                     )}
                     
                     <div className={`flex justify-between mt-1 text-sm font-bold ${(data.dueAmount || 0) + (data.previousDue || 0) > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-                        <span>Total Due</span>
+                        <span>{t('Total Due')}</span>
                         <span>{formatMoney((data.dueAmount || 0) + (data.previousDue || 0))}</span>
                     </div>
                 </div>
@@ -680,7 +680,7 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
 
             <div className="flex flex-col md:flex-row justify-between mb-16 gap-8">
                 <div>
-                    <h3 className="font-bold border-b border-slate-400 mb-2 pb-1 inline-block uppercase text-xs tracking-widest">Invoiced To</h3>
+                    <h3 className="font-bold border-b border-slate-400 mb-2 pb-1 inline-block uppercase text-xs tracking-widest">{t('Invoiced To')}</h3>
                     <p className="text-xl mt-2">{data.entityName}</p>
                     <div className="text-sm mt-1 italic text-slate-600">
                         {data.entityMobile && <p>{data.entityMobile}</p>}
@@ -689,11 +689,11 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
                 </div>
                 <div className="md:text-right">
                     <div className="mb-2">
-                        <span className="font-bold text-slate-500 uppercase text-xs tracking-widest mr-2">Invoice No:</span>
+                        <span className="font-bold text-slate-500 uppercase text-xs tracking-widest mr-2">{t('Invoice No')}:</span>
                         <span className="font-mono text-lg">{data.reference || data.id}</span>
                     </div>
                     <div>
-                        <span className="font-bold text-slate-500 uppercase text-xs tracking-widest mr-2">Date:</span>
+                        <span className="font-bold text-slate-500 uppercase text-xs tracking-widest mr-2">{t('Date')}:</span>
                         <span className="text-lg">{data.date}</span>
                     </div>
                 </div>
@@ -702,10 +702,10 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
             <table className="w-full mb-16 border-collapse">
                 <thead>
                     <tr className="border-y-2 border-slate-900">
-                        <th className="py-4 px-4 text-left font-bold text-sm uppercase tracking-wider">Description</th>
-                        <th className="py-4 px-4 text-center font-bold text-sm uppercase tracking-wider">Quantity</th>
-                        <th className="py-4 px-4 text-right font-bold text-sm uppercase tracking-wider">Unit Price</th>
-                        <th className="py-4 px-4 text-right font-bold text-sm uppercase tracking-wider">Amount</th>
+                        <th className="py-4 px-4 text-left font-bold text-sm uppercase tracking-wider">{t('Description')}</th>
+                        <th className="py-4 px-4 text-center font-bold text-sm uppercase tracking-wider">{t('Quantity')}</th>
+                        <th className="py-4 px-4 text-right font-bold text-sm uppercase tracking-wider">{t('Unit Price')}</th>
+                        <th className="py-4 px-4 text-right font-bold text-sm uppercase tracking-wider">{t('Amount')}</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-300">
@@ -726,43 +726,43 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
             <div className="flex justify-end mb-16">
                 <div className="w-full md:w-96 bg-white border border-slate-300 p-6 shadow-sm">
                     <div className="flex justify-between mb-3 border-b border-dotted border-slate-300 pb-2">
-                        <span className="italic text-slate-600">Subtotal:</span> 
+                        <span className="italic text-slate-600">{t('Subtotal')}:</span> 
                         <span>{formatMoney(data.details?.subtotal || data.amount)}</span>
                     </div>
                     {data.details?.tax ? (
                         <div className="flex justify-between mb-3 border-b border-dotted border-slate-300 pb-2">
-                            <span className="italic text-slate-600">Tax:</span> 
+                            <span className="italic text-slate-600">{t('Tax')}:</span> 
                             <span>{formatMoney(data.details.tax)}</span>
                         </div>
                     ) : null}
                     <div className="flex justify-between pt-2">
-                        <span className="font-bold text-xl">Current Bill:</span>
+                        <span className="font-bold text-xl">{t('Current Bill')}:</span>
                         <span className="font-bold text-xl">{formatMoney(data.amount)}</span>
                     </div>
 
                     {data.previousDue !== undefined && data.previousDue > 0 && (
                         <div className="flex justify-between mb-2 border-b border-dotted border-slate-300 pb-2">
-                            <span className="italic text-slate-600">Previous Due:</span>
+                            <span className="italic text-slate-600">{t('Previous Due')}:</span>
                             <span>{formatMoney(data.previousDue)}</span>
                         </div>
                     )}
 
                     {(data.previousDue !== undefined && data.previousDue > 0) && (
                         <div className="flex justify-between pt-2 border-t-2 border-slate-800 mb-2">
-                            <span className="font-black text-xl">Total Payable:</span>
+                            <span className="font-black text-xl">{t('Total Payable')}:</span>
                             <span className="font-black text-xl">{formatMoney(data.amount + (data.previousDue || 0))}</span>
                         </div>
                     )}
 
                     {data.amountPaid !== undefined && (
                         <div className="flex justify-between mt-2 text-sm text-slate-600">
-                            <span className="italic">Paid Amount:</span>
+                            <span className="italic">{t('Paid Amount')}:</span>
                             <span className="font-bold">{formatMoney(data.amountPaid)}</span>
                         </div>
                     )}
                     
                     <div className={`flex justify-between mt-1 text-sm font-bold ${(data.dueAmount || 0) + (data.previousDue || 0) > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-                        <span className="italic">Total Due:</span>
+                        <span className="italic">{t('Total Due')}:</span>
                         <span>{formatMoney((data.dueAmount || 0) + (data.previousDue || 0))}</span>
                     </div>
                 </div>
@@ -791,20 +791,20 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ data, onClose }) => {
             <div className="bg-white w-full md:max-w-4xl md:rounded-xl shadow-2xl overflow-hidden print:shadow-none print:w-full print:max-w-none print:rounded-none animate-in zoom-in duration-200 flex flex-col h-full md:h-[90vh] print:h-auto">
                 {/* Actions */}
                 <div className="bg-slate-900 p-4 flex flex-wrap gap-3 justify-between items-center print:hidden shrink-0 z-50">
-                    <h2 className="text-white font-bold text-lg hidden sm:block">Invoice Preview</h2>
+                    <h2 className="text-white font-bold text-lg hidden sm:block">{t('Invoice Preview')}</h2>
                     <div className="flex gap-2 w-full sm:w-auto justify-end">
-                        <button onClick={handleShare} className="p-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg flex items-center justify-center" title="Share">
+                        <button onClick={handleShare} className="p-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg flex items-center justify-center" title={t('Share')}>
                              <Share2 className="w-5 h-5" />
                         </button>
                         
                         {(data.type === 'Sale' || data.type === 'Purchase') && (
-                            <button onClick={handleReturn} className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-medium flex items-center gap-2" title="Process Return">
-                                <RotateCcw className="w-4 h-4" /> <span className="hidden sm:inline">Return</span>
+                            <button onClick={handleReturn} className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-medium flex items-center gap-2" title={t('Process Return')}>
+                                <RotateCcw className="w-4 h-4" /> <span className="hidden sm:inline">{t('Return')}</span>
                             </button>
                         )}
 
                         <button onClick={handlePrint} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium flex items-center gap-2">
-                            <Printer className="w-4 h-4" /> Print
+                            <Printer className="w-4 h-4" /> {t('Print')}
                         </button>
                         <button onClick={onClose} className="p-2 text-slate-400 hover:text-white rounded-lg"><X className="w-6 h-6" /></button>
                     </div>

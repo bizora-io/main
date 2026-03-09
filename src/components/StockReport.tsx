@@ -52,9 +52,10 @@ const StockReport: React.FC = () => {
 
     // 0. Summary Calculations
     const { totalProducts, inventoryValue } = useMemo(() => {
+        const activeProducts = products.filter(p => !p.isDeleted);
         return {
-            totalProducts: products.length,
-            inventoryValue: products.reduce((sum, p) => sum + (p.purchasePrice * p.stock), 0)
+            totalProducts: activeProducts.length,
+            inventoryValue: activeProducts.reduce((sum, p) => sum + (p.purchasePrice * p.stock), 0)
         };
     }, [products]);
 
@@ -229,7 +230,7 @@ const StockReport: React.FC = () => {
         setSelectedItems([]);
         setShowBulkModal(false);
         setBulkQty(0);
-        alert("Stock Updated & Transaction Logged Successfully");
+        alert(t("Stock Updated & Transaction Logged Successfully"));
     };
 
     const handleAddNote = () => {
@@ -299,7 +300,7 @@ const StockReport: React.FC = () => {
         updateTransaction(tx.id, { items: updatedItems, amount: newTotal });
         
         setEditingMovement(null);
-        alert("Transaction updated and stock level adjusted.");
+        alert(t("Transaction updated and stock level adjusted."));
     };
 
     return (
@@ -308,7 +309,7 @@ const StockReport: React.FC = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-800">{t('Stock Report')}</h1>
-                    <p className="text-slate-500 text-sm">Inventory health and movement history</p>
+                    <p className="text-slate-500 text-sm">{t('Inventory health and movement history')}</p>
                 </div>
                 
                 {/* Tabs */}
@@ -318,14 +319,14 @@ const StockReport: React.FC = () => {
                         className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${activeTab === 'all' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700'}`}
                     >
                         <Package className="w-4 h-4" />
-                        All Products
+                        {t('All Products')}
                     </button>
                     <button 
                         onClick={() => setActiveTab('stock')}
                         className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${activeTab === 'stock' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700'}`}
                     >
                         <AlertCircle className="w-4 h-4" />
-                        Low Stock 
+                        {t('Low Stock')} 
                         {lowStockList.length > 0 && <span className="bg-red-100 text-red-600 px-1.5 rounded-full text-xs ml-1">{lowStockList.length}</span>}
                     </button>
                     <button 
@@ -333,14 +334,14 @@ const StockReport: React.FC = () => {
                         className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${activeTab === 'history' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700'}`}
                     >
                         <History className="w-4 h-4" />
-                        Movement History
+                        {t('Movement History')}
                     </button>
                     <button 
                         onClick={() => setActiveTab('expired')}
                         className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${activeTab === 'expired' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700'}`}
                     >
                         <Clock className="w-4 h-4" />
-                        Expired 
+                        {t('Expired')} 
                         {expiredList.length > 0 && <span className="bg-orange-100 text-orange-600 px-1.5 rounded-full text-xs ml-1">{expiredList.length}</span>}
                     </button>
                     <button 
@@ -348,7 +349,7 @@ const StockReport: React.FC = () => {
                         className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${activeTab === 'warranty' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700'}`}
                     >
                         <ShieldCheck className="w-4 h-4" />
-                        Warranty
+                        {t('Warranty')}
                     </button>
                 </div>
             </div>
@@ -362,23 +363,23 @@ const StockReport: React.FC = () => {
                             <div className="p-2 bg-indigo-100 rounded-lg text-indigo-600">
                                 <Calculator className="w-5 h-5" />
                             </div>
-                            <h3 className="font-bold text-slate-800">Inventory Value</h3>
+                             <h3 className="font-bold text-slate-800">{t('Inventory Value')}</h3>
                         </div>
                         
                         <div className="space-y-6">
                             <div>
-                                <p className="text-sm text-slate-500 font-medium mb-1">Total Product Value (Cost)</p>
+                                <p className="text-sm text-slate-500 font-medium mb-1">{t('Total Product Value (Cost)')}</p>
                                 <div className="flex items-center gap-2">
                                     <DollarSign className="w-6 h-6 text-emerald-500" />
                                     <span className="text-3xl font-bold text-slate-800">{formatMoney(inventoryValue)}</span>
                                 </div>
                             </div>
                             <div className="pt-6 border-t border-slate-100">
-                                <p className="text-sm text-slate-500 font-medium mb-1">Total Unique Products</p>
+                                <p className="text-sm text-slate-500 font-medium mb-1">{t('Total Unique Products')}</p>
                                 <div className="flex items-center gap-2">
                                     <Layers className="w-6 h-6 text-blue-500" />
                                     <span className="text-2xl font-bold text-slate-800">{totalProducts}</span>
-                                    <span className="text-sm text-slate-400">items</span>
+                                    <span className="text-sm text-slate-400">{t('items')}</span>
                                 </div>
                             </div>
                         </div>
@@ -388,14 +389,14 @@ const StockReport: React.FC = () => {
                     <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col h-full max-h-[300px]">
                         <div className="p-4 border-b border-slate-100 bg-slate-50 rounded-t-xl flex justify-between items-center">
                             <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                                <StickyNote className="w-4 h-4 text-yellow-500" /> Stock Notes
+                                <StickyNote className="w-4 h-4 text-yellow-500" /> {t('Stock Notes')}
                             </h3>
-                            <span className="text-xs text-slate-400">{notes.length} notes</span>
+                            <span className="text-xs text-slate-400">{notes.length} {t('notes')}</span>
                         </div>
                         <div className="flex-1 overflow-y-auto p-4 space-y-2">
                             {notes.length === 0 ? (
                                 <div className="h-full flex flex-col items-center justify-center text-slate-400">
-                                    <p className="text-sm italic">No notes added. Use this to track specific stock issues.</p>
+                                    <p className="text-sm italic">{t('No notes added. Use this to track specific stock issues.')}</p>
                                 </div>
                             ) : (
                                 notes.map(note => (
@@ -422,7 +423,7 @@ const StockReport: React.FC = () => {
                                 onChange={(e) => setNewNote(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleAddNote()}
                                 className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                placeholder="Add a quick note..."
+                                placeholder={t('Add a quick note...')}
                             />
                             <button 
                                 onClick={handleAddNote}
@@ -440,22 +441,22 @@ const StockReport: React.FC = () => {
                 <div className="animate-in fade-in slide-in-from-bottom-2">
                     <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                         <div className="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                            <h3 className="font-bold text-slate-800">All Products List</h3>
-                            <span className="text-xs text-slate-500">{allProductList.length} items</span>
+                             <h3 className="font-bold text-slate-800">{t('All Products List')}</h3>
+                            <span className="text-xs text-slate-500">{allProductList.length} {t('items')}</span>
                         </div>
                         <table className="w-full text-sm text-left">
                             <thead className="bg-white text-slate-500 font-medium border-b border-slate-100">
                                 <tr>
-                                    <th className="px-6 py-4">Product Name</th>
-                                    <th className="px-6 py-4">Category</th>
-                                    <th className="px-6 py-4 text-center">Current Stock</th>
-                                    <th className="px-6 py-4 text-right">Purchase Price</th>
-                                    <th className="px-6 py-4 text-right">Sale Price</th>
+                                    <th className="px-6 py-4">{t('Product Name')}</th>
+                                    <th className="px-6 py-4">{t('Category')}</th>
+                                    <th className="px-6 py-4 text-center">{t('Current Stock')}</th>
+                                    <th className="px-6 py-4 text-right">{t('Purchase Price')}</th>
+                                    <th className="px-6 py-4 text-right">{t('Sale Price')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {allProductList.length === 0 ? (
-                                    <tr><td colSpan={5} className="p-8 text-center text-slate-400">No products found.</td></tr>
+                                    <tr><td colSpan={5} className="p-8 text-center text-slate-400">{t('No products found.')}</td></tr>
                                 ) : (
                                     allProductList.map(p => (
                                         <tr key={p.id} className="hover:bg-slate-50">
@@ -489,11 +490,11 @@ const StockReport: React.FC = () => {
                 <div className="animate-in fade-in slide-in-from-bottom-2">
                     <div className="flex justify-between items-center mb-4">
                         <div className="flex items-center gap-2 text-sm text-slate-500">
-                            <span className="font-semibold text-slate-700">{lowStockList.length}</span> items below minimum threshold
+                            <span className="font-semibold text-slate-700">{lowStockList.length}</span> {t('items below minimum threshold')}
                         </div>
                         {selectedItems.length > 0 && (
                             <button onClick={() => setShowBulkModal(true)} className="bg-slate-900 text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 shadow-sm hover:bg-slate-800">
-                                <Save className="w-4 h-4" /> Restock Selected ({selectedItems.length})
+                                <Save className="w-4 h-4" /> {t('Restock Selected')} ({selectedItems.length})
                             </button>
                         )}
                     </div>
@@ -507,14 +508,14 @@ const StockReport: React.FC = () => {
                                             {selectedItems.length === lowStockList.length && lowStockList.length > 0 ? <CheckSquare className="w-5 h-5 text-indigo-600"/> : <Square className="w-5 h-5 text-slate-400"/>}
                                         </button>
                                     </th>
-                                    <th className="px-6 py-4">Product Name</th>
-                                    <th className="px-6 py-4 text-center">Current Stock</th>
-                                    <th className="px-6 py-4 text-right">Unit Value</th>
+                                    <th className="px-6 py-4">{t('Product Name')}</th>
+                                    <th className="px-6 py-4 text-center">{t('Current Stock')}</th>
+                                    <th className="px-6 py-4 text-right">{t('Unit Value')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {lowStockList.length === 0 ? (
-                                    <tr><td colSpan={4} className="p-8 text-center text-slate-400">All stock levels are healthy!</td></tr>
+                                    <tr><td colSpan={4} className="p-8 text-center text-slate-400">{t('All stock levels are healthy!')}</td></tr>
                                 ) : (
                                     lowStockList.map(p => (
                                         <tr key={p.id} className={`hover:bg-slate-50 ${selectedItems.includes(p.id) ? 'bg-indigo-50/50' : ''}`}>
@@ -550,7 +551,7 @@ const StockReport: React.FC = () => {
                     <div className="flex flex-col md:flex-row justify-between items-center mb-4 bg-white p-3 rounded-xl border border-slate-200 gap-4">
                         <div className="flex items-center gap-2">
                             <span className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                                <Filter className="w-4 h-4"/> Filter:
+                                <Filter className="w-4 h-4"/> {t('Filter')}:
                             </span>
                             <div className="flex bg-slate-100 rounded-lg p-1">
                                 {['All', 'Buy', 'Sell', 'Adjustment'].map(opt => (
@@ -559,7 +560,7 @@ const StockReport: React.FC = () => {
                                         onClick={() => setHistoryFilter(opt as any)}
                                         className={`px-3 py-1 rounded text-xs font-bold transition-all ${historyFilter === opt ? 'bg-white shadow text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
                                     >
-                                        {opt}
+                                        {t(opt)}
                                     </button>
                                 ))}
                             </div>
@@ -569,7 +570,7 @@ const StockReport: React.FC = () => {
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input 
                                 type="text" 
-                                placeholder="Search product or ref..." 
+                                placeholder={t('Search product or ref...')} 
                                 value={historySearch}
                                 onChange={e => setHistorySearch(e.target.value)}
                                 className="w-full pl-9 pr-4 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -581,18 +582,18 @@ const StockReport: React.FC = () => {
                         <table className="w-full text-sm text-left">
                             <thead className="bg-slate-50 text-slate-500 font-medium border-b border-slate-100">
                                 <tr>
-                                    <th className="px-6 py-4">Date</th>
-                                    <th className="px-6 py-4">Type</th>
-                                    <th className="px-6 py-4">Product Detail</th>
-                                    <th className="px-6 py-4 text-center">Movement</th>
-                                    <th className="px-6 py-4 text-center">Stock Snapshot</th>
-                                    <th className="px-6 py-4 text-center">Batch/Exp</th>
-                                    <th className="px-6 py-4 text-right">Actions</th>
+                                    <th className="px-6 py-4">{t('Date')}</th>
+                                    <th className="px-6 py-4">{t('Type')}</th>
+                                    <th className="px-6 py-4">{t('Product Detail')}</th>
+                                    <th className="px-6 py-4 text-center">{t('Movement')}</th>
+                                    <th className="px-6 py-4 text-center">{t('Stock Snapshot')}</th>
+                                    <th className="px-6 py-4 text-center">{t('Batch/Exp')}</th>
+                                    <th className="px-6 py-4 text-right">{t('Actions')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {filteredMovements.length === 0 ? (
-                                    <tr><td colSpan={7} className="p-8 text-center text-slate-400">No movements found matching filters.</td></tr>
+                                    <tr><td colSpan={7} className="p-8 text-center text-slate-400">{t('No movements found matching filters.')}</td></tr>
                                 ) : (
                                     filteredMovements.map((move, idx) => {
                                         let isIncoming = ['Purchase', 'Sales Return'].includes(move.type);
@@ -664,14 +665,14 @@ const StockReport: React.FC = () => {
                                                         <button 
                                                             onClick={(e) => { e.stopPropagation(); openEditMovement(move); }}
                                                             className="text-slate-400 hover:text-indigo-600 p-2 rounded hover:bg-indigo-50 transition-colors"
-                                                            title="Modify Transaction"
+                                                            title={t('Modify Transaction')}
                                                         >
                                                             <Edit2 className="w-4 h-4"/>
                                                         </button>
                                                         <button 
                                                             onClick={(e) => handleDeleteMovement(move.transactionId, e)}
                                                             className="text-slate-400 hover:text-red-600 p-2 rounded hover:bg-red-50 transition-colors"
-                                                            title="Delete Record"
+                                                            title={t('Delete Record')}
                                                         >
                                                             <Trash2 className="w-4 h-4"/>
                                                         </button>
@@ -693,8 +694,8 @@ const StockReport: React.FC = () => {
                     <div className="bg-orange-50 border border-orange-100 p-4 rounded-xl mb-4 flex items-start gap-3">
                         <AlertTriangle className="w-5 h-5 text-orange-600 mt-0.5" />
                         <div>
-                            <h4 className="font-bold text-orange-800">Expiry Monitor</h4>
-                            <p className="text-sm text-orange-700">Showing products expired or expiring within the next 90 days.</p>
+                            <h4 className="font-bold text-orange-800">{t('Expiry Monitor')}</h4>
+                            <p className="text-sm text-orange-700">{t('Showing products expired or expiring within the next 90 days.')}</p>
                         </div>
                     </div>
 
@@ -702,15 +703,15 @@ const StockReport: React.FC = () => {
                         <table className="w-full text-sm text-left">
                             <thead className="bg-slate-50 text-slate-500 font-medium border-b border-slate-100">
                                 <tr>
-                                    <th className="px-6 py-4">Product Name</th>
-                                    <th className="px-6 py-4">Expiry Date</th>
-                                    <th className="px-6 py-4 text-center">Days Remaining</th>
-                                    <th className="px-6 py-4 text-center">Status</th>
+                                    <th className="px-6 py-4">{t('Product Name')}</th>
+                                    <th className="px-6 py-4">{t('Expiry Date')}</th>
+                                    <th className="px-6 py-4 text-center">{t('Days Remaining')}</th>
+                                    <th className="px-6 py-4 text-center">{t('Status')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {expiredList.length === 0 ? (
-                                    <tr><td colSpan={4} className="p-8 text-center text-slate-400">No expiring products found.</td></tr>
+                                    <tr><td colSpan={4} className="p-8 text-center text-slate-400">{t('No expiring products found.')}</td></tr>
                                 ) : (
                                     expiredList.map(p => (
                                         <tr key={p.id} className="hover:bg-slate-50">
@@ -718,14 +719,14 @@ const StockReport: React.FC = () => {
                                             <td className="px-6 py-4 font-mono text-slate-600">{p.expiryDate}</td>
                                             <td className="px-6 py-4 text-center">
                                                 <span className={`font-bold ${p.isExpired ? 'text-red-600' : 'text-orange-500'}`}>
-                                                    {p.diffDays} days
+                                                    {p.diffDays} {t('days')}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-center">
                                                 {p.isExpired ? (
-                                                    <span className="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">Expired</span>
+                                                    <span className="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">{t('Expired')}</span>
                                                 ) : (
-                                                    <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded text-xs font-bold">Expiring Soon</span>
+                                                    <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded text-xs font-bold">{t('Expiring Soon')}</span>
                                                 )}
                                             </td>
                                         </tr>
@@ -742,20 +743,20 @@ const StockReport: React.FC = () => {
                 <div className="animate-in fade-in slide-in-from-bottom-2">
                     <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                         <div className="p-4 border-b border-slate-100 bg-slate-50">
-                            <h3 className="font-bold text-slate-800">Products with Warranty Coverage</h3>
+                            <h3 className="font-bold text-slate-800">{t('Products with Warranty Coverage')}</h3>
                         </div>
                         <table className="w-full text-sm text-left">
                             <thead className="bg-white text-slate-500 font-medium border-b border-slate-100">
                                 <tr>
-                                    <th className="px-6 py-4">Product Name</th>
-                                    <th className="px-6 py-4">Category</th>
-                                    <th className="px-6 py-4">Warranty Period</th>
-                                    <th className="px-6 py-4 text-center">Stock</th>
+                                    <th className="px-6 py-4">{t('Product Name')}</th>
+                                    <th className="px-6 py-4">{t('Category')}</th>
+                                    <th className="px-6 py-4">{t('Warranty Period')}</th>
+                                    <th className="px-6 py-4 text-center">{t('Stock')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {warrantyList.length === 0 ? (
-                                    <tr><td colSpan={4} className="p-8 text-center text-slate-400">No warranty products listed.</td></tr>
+                                    <tr><td colSpan={4} className="p-8 text-center text-slate-400">{t('No warranty products listed.')}</td></tr>
                                 ) : (
                                     warrantyList.map(p => (
                                         <tr key={p.id} className="hover:bg-slate-50">
@@ -764,7 +765,7 @@ const StockReport: React.FC = () => {
                                             <td className="px-6 py-4">
                                                 <span className="flex items-center gap-2 text-emerald-600 font-medium bg-emerald-50 px-3 py-1 rounded-full w-fit">
                                                     <ShieldCheck className="w-3 h-3" />
-                                                    {p.warrantyPeriod || 'Standard Warranty'}
+                                                    {p.warrantyPeriod || t('Standard Warranty')}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-center font-medium">{p.stock} {p.unit}</td>
@@ -782,20 +783,20 @@ const StockReport: React.FC = () => {
                 <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
                     <div className="bg-white rounded-xl p-6 max-w-sm w-full shadow-xl animate-in zoom-in duration-200">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="font-bold text-lg">Bulk Restock</h3>
+                            <h3 className="font-bold text-lg">{t('Bulk Restock')}</h3>
                             <button onClick={() => setShowBulkModal(false)}><X className="w-5 h-5 text-slate-400"/></button>
                         </div>
-                        <p className="text-sm text-slate-500 mb-4">Add stock to {selectedItems.length} selected items:</p>
+                        <p className="text-sm text-slate-500 mb-4">{t('Add stock to')} {selectedItems.length} {t('selected items')}:</p>
                         <input 
                             type="number" 
                             value={bulkQty} 
                             onChange={e => setBulkQty(parseInt(e.target.value))} 
                             className="w-full border p-3 rounded-lg mb-4 text-lg font-medium focus:ring-2 focus:ring-indigo-500 outline-none" 
-                            placeholder="Qty to add" 
+                            placeholder={t('Qty to add')} 
                             min="1"
                         />
                         <button onClick={handleBulkUpdate} className="w-full py-3 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 transition-colors">
-                            Confirm Update
+                            {t('Confirm Update')}
                         </button>
                     </div>
                 </div>
@@ -806,15 +807,15 @@ const StockReport: React.FC = () => {
                 <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
                     <div className="bg-white rounded-xl p-6 max-w-sm w-full shadow-xl animate-in zoom-in duration-200">
                         <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
-                            <h3 className="font-bold text-lg text-slate-800">Edit Transaction</h3>
+                            <h3 className="font-bold text-lg text-slate-800">{t('Edit Transaction')}</h3>
                             <button onClick={() => setEditingMovement(null)}><X className="w-5 h-5 text-slate-400"/></button>
                         </div>
                         <div className="mb-4">
-                            <p className="text-xs font-bold text-slate-500 uppercase mb-1">Product</p>
+                            <p className="text-xs font-bold text-slate-500 uppercase mb-1">{t('Product')}</p>
                             <p className="text-slate-800 font-medium">{editingMovement.productName}</p>
                         </div>
                         <div className="mb-6">
-                            <p className="text-xs font-bold text-slate-500 uppercase mb-2">Quantity</p>
+                            <p className="text-xs font-bold text-slate-500 uppercase mb-2">{t('Quantity')}</p>
                             <input 
                                 type="number" 
                                 value={editQty} 
@@ -822,14 +823,14 @@ const StockReport: React.FC = () => {
                                 className="w-full border p-3 rounded-lg text-xl font-bold text-center focus:ring-2 focus:ring-indigo-500 outline-none" 
                                 min="0"
                             />
-                            <p className="text-xs text-center text-slate-400 mt-2">Adjusting this will update current stock levels.</p>
+                            <p className="text-xs text-center text-slate-400 mt-2">{t('Adjusting this will update current stock levels.')}</p>
                         </div>
                         <div className="flex gap-2">
                             <button onClick={() => setEditingMovement(null)} className="flex-1 py-3 border border-slate-200 text-slate-600 rounded-lg font-bold hover:bg-slate-50 transition-colors">
-                                Cancel
+                                {t('Cancel')}
                             </button>
                             <button onClick={saveMovementEdit} className="flex-1 py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-colors">
-                                Save Changes
+                                {t('Save Changes')}
                             </button>
                         </div>
                     </div>
@@ -844,9 +845,9 @@ const StockReport: React.FC = () => {
                             <div>
                                 <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
                                     <FileText className="w-5 h-5 text-indigo-600" />
-                                    Transaction Details
+                                    {t('Transaction Details')}
                                 </h3>
-                                <p className="text-xs text-slate-500">Ref: {viewTransaction.reference || viewTransaction.id}</p>
+                                <p className="text-xs text-slate-500">{t('Ref')}: {viewTransaction.reference || viewTransaction.id}</p>
                             </div>
                             <button onClick={() => setViewTransaction(null)} className="text-slate-400 hover:text-slate-600">
                                 <X className="w-6 h-6" />
@@ -856,26 +857,26 @@ const StockReport: React.FC = () => {
                         <div className="p-6 overflow-y-auto">
                             <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
                                 <div>
-                                    <p className="text-xs text-slate-500 uppercase font-bold">Date</p>
+                                    <p className="text-xs text-slate-500 uppercase font-bold">{t('Date')}</p>
                                     <p className="font-medium text-slate-800">{viewTransaction.date}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-slate-500 uppercase font-bold">Type</p>
+                                    <p className="text-xs text-slate-500 uppercase font-bold">{t('Type')}</p>
                                     <span className="inline-block px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-700 mt-1">
-                                        {viewTransaction.type}
+                                        {t(viewTransaction.type)}
                                     </span>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-slate-500 uppercase font-bold">Entity / User</p>
+                                    <p className="text-xs text-slate-500 uppercase font-bold">{t('Entity / User')}</p>
                                     <p className="font-medium text-slate-800">{viewTransaction.entityName}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-slate-500 uppercase font-bold">Total Amount</p>
+                                    <p className="text-xs text-slate-500 uppercase font-bold">{t('Total Amount')}</p>
                                     <p className="font-bold text-indigo-600">{formatMoney(viewTransaction.amount)}</p>
                                 </div>
                             </div>
 
-                            <h4 className="font-bold text-slate-700 text-sm mb-3 border-b border-slate-100 pb-2">Items</h4>
+                            <h4 className="font-bold text-slate-700 text-sm mb-3 border-b border-slate-100 pb-2">{t('Items')}</h4>
                             <div className="space-y-2">
                                 {viewTransaction.items?.map((item, idx) => (
                                     <div key={idx} className="flex justify-between items-center p-3 bg-slate-50 rounded-lg border border-slate-100">
@@ -887,7 +888,7 @@ const StockReport: React.FC = () => {
                                     </div>
                                 ))}
                                 {(!viewTransaction.items || viewTransaction.items.length === 0) && (
-                                    <p className="text-sm text-slate-400 italic">No items details available.</p>
+                                    <p className="text-sm text-slate-400 italic">{t('No items details available.')}</p>
                                 )}
                             </div>
                         </div>
