@@ -310,14 +310,15 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Helpers
   const convertGlobalToLocal = useCallback((amount: number) => {
-      // Currency conversion disabled as per user request: only symbol should change
-      return amount;
-  }, []);
+      const rate = EXCHANGE_RATES[currency] || 1;
+      return amount * rate;
+  }, [currency]);
 
   const convertLocalToGlobal = useCallback((localAmount: number) => {
-      // Currency conversion disabled as per user request: only symbol should change
-      return localAmount;
-  }, []);
+      const rate = EXCHANGE_RATES[currency] || 1;
+      if (rate === 0) return 0;
+      return localAmount / rate;
+  }, [currency]);
 
   const formatMoney = useCallback((amount: number) => {
       const convertedAmount = convertGlobalToLocal(amount);

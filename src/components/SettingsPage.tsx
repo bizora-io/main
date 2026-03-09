@@ -155,7 +155,7 @@ const SettingsPage: React.FC = () => {
     const { user, updateUser, unlockTemplate, initiate2faSetup, verifyAndEnable2fa, disable2fa, sessions, loginHistory, devices, terminateSession, removeDevice, activityLogs, switchBusiness, updateBusinessSettings, addBusiness } = useAuth();
     const { stores, addStore, updateStore, deleteStore } = useStores();
     const [activeTab, setActiveTab] = useState<'profile' | 'appearance' | 'business' | 'templates' | 'security'>('profile');
-    const [businessSubTab, setBusinessSubTab] = useState<'general' | 'stores' | 'tax' | 'hours' | 'notifications' | 'localization'>('general');
+    const [businessSubTab, setBusinessSubTab] = useState<'general' | 'stores' | 'tax' | 'hours' | 'notifications'>('general');
     
     // Business State
     const activeBusiness = user?.businesses?.find(b => b.name === user.businessName) || user?.businesses?.[0];
@@ -560,7 +560,7 @@ const SettingsPage: React.FC = () => {
                     <div className="space-y-6">
                         <div className="flex items-center justify-between mb-2">
                             <div className="flex gap-4">
-                                {['general', 'stores', 'tax', 'hours', 'notifications', 'localization'].map((sub) => (
+                                {['general', 'stores', 'tax', 'hours', 'notifications'].map((sub) => (
                                     <button
                                         key={sub}
                                         onClick={() => setBusinessSubTab(sub as any)}
@@ -963,53 +963,6 @@ const SettingsPage: React.FC = () => {
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-1">{t('API Key / Token')}</label>
                                             <input type="password" value="••••••••••••" className="w-full px-4 py-2 border border-slate-300 rounded-lg bg-slate-50" readOnly />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {businessSubTab === 'localization' && (
-                            <div className="space-y-6 max-w-2xl">
-                                <div>
-                                    <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                                        <Globe className="w-5 h-5 text-slate-500" /> {t('Formatting & Localization')}
-                                    </h3>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">{t('App Language')}</label>
-                                            <select 
-                                                value={language} 
-                                                onChange={(e) => setLanguage(e.target.value as AppLanguage)}
-                                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white"
-                                            >
-                                                {Object.entries(AppLanguage).map(([key, value]) => (
-                                                    <option key={value} value={value}>{key.charAt(0) + key.slice(1).toLowerCase()}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">{t('Currency')}</label>
-                                            <select 
-                                                value={currency} 
-                                                onChange={(e) => setCurrency(e.target.value as Currency)}
-                                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white"
-                                            >
-                                                {Object.values(Currency).map(c => <option key={c} value={c}>{CURRENCY_SYMBOLS[c] || c} {c}</option>)}
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">{t('Decimal Places')}</label>
-                                            <select 
-                                                value={decimalPlaces} 
-                                                onChange={(e) => setDecimalPlaces(parseInt(e.target.value))}
-                                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white"
-                                            >
-                                                <option value={0}>0 (e.g. $100)</option>
-                                                <option value={1}>1 (e.g. $100.0)</option>
-                                                <option value={2}>2 (e.g. $100.00)</option>
-                                                <option value={3}>3 (e.g. $100.000)</option>
-                                            </select>
                                         </div>
                                     </div>
                                 </div>

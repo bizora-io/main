@@ -58,8 +58,6 @@ export interface User {
   twoFactorEnabled: boolean;
   pinEnabled: boolean;
   passwordEnabled: boolean;
-  pin?: string;
-  password?: string;
   avatar?: string;
   parentId?: string; // For sub-users
   businesses?: Business[];
@@ -118,10 +116,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(JSON.parse(savedUser));
     }
     
-    // Removed mock initial data
-    setSessions([]);
-    setDevices([]);
-    setLoginHistory([]);
+    // Mock initial data
+    setSessions([
+        { id: 's1', userId: 'u1', device: 'Chrome on MacOS', ip: '192.168.1.1', location: 'Dhaka, BD', lastActive: new Date().toISOString(), isCurrent: true }
+    ]);
+    setDevices([
+        { id: 'd1', name: 'MacBook Pro', type: 'DESKTOP', lastUsed: new Date().toISOString(), isTrusted: true },
+        { id: 'd2', name: 'iPhone 15', type: 'MOBILE', lastUsed: new Date(Date.now() - 86400000).toISOString(), isTrusted: true }
+    ]);
+    setLoginHistory([
+        { id: 'h1', timestamp: new Date().toISOString(), status: 'SUCCESS', method: 'PIN', device: 'Chrome on MacOS', ip: '192.168.1.1' }
+    ]);
   }, []);
 
   const logActivity = (action: string, module: string, details?: string) => {
@@ -246,28 +251,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }
 
-    // Check against registered users
-    const savedUsers = localStorage.getItem('nexus_registered_users');
-    if (savedUsers) {
-        const users: User[] = JSON.parse(savedUsers);
-        const registeredUser = users.find(u => 
-            (u.email === identifier || u.mobile === identifier) && 
-            (method === 'OTP' || secret === u.pin || secret === u.password)
-        );
+    // Mock login logic - let's assume if identifier is '2fa@example.com', 2FA is enabled
+    const is2faTest = identifier === '2fa@example.com' || identifier === '0123456789';
 
-        if (registeredUser) {
-            if (registeredUser.twoFactorEnabled) {
-                setPendingUser(registeredUser);
-                return { success: true, require2fa: true };
-            }
-            setUser(registeredUser);
-            localStorage.setItem('nexus_user', JSON.stringify(registeredUser));
-            logActivity('Login', 'Auth', `Logged in via ${method}`);
-            return { success: true };
-        }
+    const mockUser: User = {
+      id: 'user-' + Math.random().toString(36).substring(2, 5),
+      name: 'Shop Owner',
+      businessName: 'My Enterprise',
+      email: identifier.includes('@') ? identifier : 'user@example.com',
+      mobile: identifier.includes('@') ? '1234567890' : identifier,
+      businessType: 'Retail',
+      location: 'New York, USA',
+      locationCount: 1,
+      isPremium: false,
+      unlockedTemplates: [1],
+      role: UserRole.SHOP_OWNER,
+      permissions: getAllPermissions().filter(p => !p.startsWith('saas.')), // Give all business permissions
+      initialLoginDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+      twoFactorEnabled: is2faTest,
+      pinEnabled: true,
+      passwordEnabled: true,
+      businesses: [
+          { id: 'b1', name: 'My Enterprise', type: 'Retail', location: 'New York, USA' },
+          { id: 'b2', name: 'Second Store', type: 'Wholesale', location: 'London, UK' }
+      ]
+    };
+
+    if (mockUser.twoFactorEnabled) {
+        setPendingUser(mockUser);
+        return { success: true, require2fa: true };
     }
 
-    return { success: false };
+    setUser(mockUser);
+    localStorage.setItem('nexus_user', JSON.stringify(mockUser));
+    logActivity('Login', 'Auth', `Logged in via ${method}`);
+    return { success: true };
   };
 
   const complete2fa = async (otp: string): Promise<boolean> => {
@@ -284,13 +302,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signup = async (data: any): Promise<boolean> => {
     const newUser: User = {
       id: 'user-' + Math.random().toString(36).substring(2, 7),
-      name: data.name || 'Shop Owner',
       businessName: data.businessName,
       email: data.email,
       mobile: data.mobile,
       businessType: data.businessType,
       location: data.location,
-      locationCount: parseInt(data.locationCount) || 1,
+      locationCount: parseInt(data.locationCount),
       isPremium: false,
       unlockedTemplates: [1],
       role: UserRole.OWNER,
@@ -298,25 +315,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       initialLoginDate: new Date().toISOString(),
       twoFactorEnabled: false,
       pinEnabled: true,
-      passwordEnabled: true,
-      pin: data.pin,
-      password: data.password,
-      businesses: [
-          { id: 'b1', name: data.businessName, type: data.businessType, location: data.location }
-      ]
+      passwordEnabled: true
     };
-
-    const savedUsers = localStorage.getItem('nexus_registered_users');
-    const users = savedUsers ? JSON.parse(savedUsers) : [];
-    users.push(newUser);
-    localStorage.setItem('nexus_registered_users', JSON.stringify(users));
-
-    // Clear existing data for a clean start
-    Object.keys(localStorage).forEach(key => {
-        if (key.startsWith('nexus_') && key !== 'nexus_user' && key !== 'nexus_registered_users') {
-            localStorage.removeItem(key);
-        }
-    });
 
     setUser(newUser);
     localStorage.setItem('nexus_user', JSON.stringify(newUser));

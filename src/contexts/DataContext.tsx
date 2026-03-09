@@ -2,12 +2,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { useStores } from './StoreContext';
 import { Staff, AppLog } from '../types';
-import * as syncService from '../services/syncService';
-import { useInventory } from '../hooks/data/useInventory';
-import { useCRM } from '../hooks/data/useCRM';
-import { useFinance } from '../hooks/data/useFinance';
-import { useSettings } from '../hooks/data/useSettings';
-import { useSystemData } from '../hooks/data/useSystemData';
 
 export interface ProductVariant {
   id: string;
@@ -189,7 +183,6 @@ export interface LedgerEntry {
   accountId?: string; // Linked Financial Account ID
   reference?: string; 
   items?: InvoiceItem[]; 
-  payments?: { method: string, amount: number, accountId?: string }[];
   details?: {
       subtotal: number;
       tax: number;
@@ -405,17 +398,60 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 // Helper for initial data with store ID
 const withStore = (data: any[], storeId = '1') => data.map(item => ({ ...item, storeId }));
 
-const INITIAL_PRODUCTS: Product[] = [];
+const INITIAL_PRODUCTS: Product[] = [
+  { id: '1', storeId: '1', name: 'Ointment CRISADERM 10 ML', stock: 10, purchasePrice: 50, salePrice: 70, category: 'Pharma', subCategory: 'Ointment', expiryDate: '2024-12-31', batchNumber: 'B101', unit: 'Pcs', sellOnline: true, isFeatured: true, minStockLevel: 5 },
+  { id: '2', storeId: '1', name: 'Ointment TREGO 3 GM', stock: 25, purchasePrice: 30, salePrice: 45, category: 'Pharma', subCategory: 'Ointment', expiryDate: '2023-11-20', batchNumber: 'B102', unit: 'Pcs', minStockLevel: 5 }, 
+  { id: '3', storeId: '1', name: 'Ointment NEBAZIN 20GM', stock: 0, purchasePrice: 80, salePrice: 110, category: 'Pharma', subCategory: 'Ointment', expiryDate: '2025-06-15', batchNumber: 'B103', unit: 'Pcs', sellOnline: true, minStockLevel: 10 },
+  { id: '4', storeId: '2', name: 'Ointment TIOZOL (Branch 2)', stock: 5, purchasePrice: 40, salePrice: 60, category: 'Pharma', subCategory: 'Ointment', expiryDate: '2024-05-20', batchNumber: 'B104', unit: 'Pcs', minStockLevel: 5 }, 
+  { id: '5', storeId: '1', name: 'Ointment BETAMESAL 15 GM', stock: 100, purchasePrice: 90, salePrice: 120, category: 'Pharma', subCategory: 'Ointment', unit: 'Pcs', sellOnline: true, isFeatured: true, minStockLevel: 20 },
+  { id: '6', storeId: '1', name: 'Wireless Mouse M305', stock: 50, purchasePrice: 15, salePrice: 25, category: 'Electronics', subCategory: 'Accessories', warranty: true, warrantyPeriod: '6 Months', unit: 'Pcs', sellOnline: true, minStockLevel: 5 },
+];
 
-const INITIAL_STAFF: Staff[] = [];
+const INITIAL_STAFF: Staff[] = [
+  { 
+      id: 's1', storeId: '1', name: 'Manager John', role: 'Manager', pin: '1234', status: 'Active', permissions: ['all'], lastLogin: '2024-03-15 09:30 AM',
+      basicSalary: 30000, joiningDate: '2023-01-01', performance: { rating: 4.5, reviews: [] },
+      attendance: { '2024-03-20': { status: 'Present', checkIn: '09:00 AM' } },
+      lastLocation: { lat: 40.7128, lng: -74.0060, address: 'Main Store', timestamp: '10 min ago' }
+  },
+  { 
+      id: 's2', storeId: '1', name: 'Sales Alice', role: 'Salesperson', pin: '1111', status: 'Active', permissions: ['pos.sell', 'pos.view_sales', 'inventory.view'], lastLogin: '2024-03-15 10:00 AM',
+      basicSalary: 15000, joiningDate: '2023-06-15', performance: { rating: 4.8, reviews: [] },
+      attendance: { '2024-03-20': { status: 'Present', checkIn: '09:15 AM' } },
+      lastLocation: { lat: 40.7328, lng: -74.0160, address: 'Delivery Route 5', timestamp: '5 min ago' }
+  }
+];
 
-const INITIAL_LOGS: AppLog[] = [];
+const INITIAL_LOGS: AppLog[] = [
+  { id: 'l1', staffName: 'Manager John', module: 'Inventory', action: 'Stock Update', timestamp: '2024-03-15 09:35 AM', details: 'Added 50 units to Wireless Mouse' },
+  { id: 'l2', staffName: 'Sales Alice', module: 'Sales', action: 'New Invoice', timestamp: '2024-03-15 10:15 AM', details: 'Invoice #INV-001 created' }
+];
 
-const INITIAL_ACCOUNTS: FinancialAccount[] = [];
+const INITIAL_ACCOUNTS: FinancialAccount[] = [
+    { id: 'cash-1', storeId: '1', name: 'Main Cash', type: 'Cash', balance: 50000, isDefault: true },
+    { id: 'bank-1', storeId: '1', name: 'City Bank', type: 'Bank', balance: 250000, accountNumber: '123-456-789', bankName: 'City Bank Ltd' },
+    { id: 'mobile-1', storeId: '1', name: 'bKash Merchant', type: 'Mobile Wallet', balance: 15000, accountNumber: '01700000000' }
+];
 
-const INITIAL_ONLINE_ORDERS: OnlineOrder[] = [];
+const INITIAL_ONLINE_ORDERS: OnlineOrder[] = [
+    {
+        id: 'WEB-1001',
+        storeId: '1',
+        customerName: 'Online Guest',
+        address: '123 Virtual Lane, Web City',
+        items: [{ productId: '6', name: 'Wireless Mouse M305', qty: 1, price: 25 }],
+        total: 25,
+        status: 'Pending',
+        date: '2024-03-20',
+        platform: 'WooCommerce'
+    }
+];
 
-const INITIAL_CATEGORIES: Category[] = [];
+const INITIAL_CATEGORIES: Category[] = [
+    { id: 'c1', name: 'Electronics', subCategories: ['Mobile', 'Laptop', 'Accessories'] },
+    { id: 'c2', name: 'Clothing', subCategories: ['Men', 'Women', 'Kids'] },
+    { id: 'c3', name: 'Pharma', subCategories: ['Medicine', 'Healthcare', 'Ointment'] },
+];
 
 const INITIAL_EXPENSE_CATEGORIES: ExpenseCategory[] = [
     { id: 'ec1', name: 'Rent', isDefault: true },
@@ -431,39 +467,98 @@ const INITIAL_EXPENSE_CATEGORIES: ExpenseCategory[] = [
 ];
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [pendingTransactions, setPendingTransactions] = useState<LedgerEntry[]>([]);
-
-    useEffect(() => {
-        const stored = localStorage.getItem('pending_transactions');
-        if (stored) setPendingTransactions(JSON.parse(stored));
-    }, []);
-
-    useEffect(() => {
-        const handleOnline = async () => {
-            console.log('Back online, syncing pending transactions...');
-            if (pendingTransactions.length > 0) {
-                const success = await syncService.syncData(pendingTransactions);
-                if (success) {
-                    setPendingTransactions([]);
-                    localStorage.removeItem('pending_transactions');
-                }
-            }
-        };
-
-        window.addEventListener('online', handleOnline);
-        return () => window.removeEventListener('online', handleOnline);
-    }, [pendingTransactions]);
   const { activeStore } = useStores();
   
-  const { products, setProducts, rawMaterials, setRawMaterials, boms, setBoms, productionBatches, setProductionBatches } = useInventory();
-  const { customers, setCustomers, suppliers, setSuppliers, customerGroups, setCustomerGroups, supportTickets, setSupportTickets, feedbacks, setFeedbacks, marketingCampaigns, setMarketingCampaigns } = useCRM();
-  const { transactions, setTransactions, financialAccounts, setFinancialAccounts, expenseCategories, setExpenseCategories } = useFinance();
-  const { courierSettings, setCourierSettings, domainSettings, setDomainSettings, promoCodes, setPromoCodes, shopPolicies, setShopPolicies, categories, setCategories } = useSettings();
-  const { onlineOrders, setOnlineOrders, appLogs, setAppLogs, staff, setStaff } = useSystemData();
+  // RAW Data States (Contain all stores data)
+  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  const [customers, setCustomers] = useState<Entity[]>([
+      { id: 'c1', name: 'Rahim Uddin', mobile: '01711223344', address: 'Dhaka, Bangladesh', type: 'Customer', loyaltyPoints: 120 }
+  ]);
+  const [suppliers, setSuppliers] = useState<Entity[]>([
+      { id: 's1', name: 'ACI Pharma', mobile: '01911223344', address: 'Tejgaon Ind. Area', type: 'Supplier' }
+  ]);
+  const [transactions, setTransactions] = useState<LedgerEntry[]>([
+      { id: 't1', storeId: '1', date: '2024-03-10', entityName: 'Rahim Uddin', entityMobile: '01711223344', type: 'Sale', amount: 500, paymentMethod: 'Cash', accountId: 'cash-1', createdBy: 'Admin', details: { subtotal: 500, tax: 0, discount: 0, delivery: 0 } },
+      { id: 't2', storeId: '1', date: '2024-03-11', entityName: 'ACI Pharma', type: 'Purchase', amount: 2000, paymentMethod: 'Due', createdBy: 'Manager' }
+  ]);
+  const [financialAccounts, setFinancialAccounts] = useState<FinancialAccount[]>(INITIAL_ACCOUNTS);
+  const [onlineOrders, setOnlineOrders] = useState<OnlineOrder[]>(INITIAL_ONLINE_ORDERS);
+  const [staff, setStaffState] = useState<Staff[]>(() => {
+      const saved = localStorage.getItem('nexus_staff');
+      return saved ? JSON.parse(saved) : INITIAL_STAFF;
+  });
 
+  useEffect(() => {
+      localStorage.setItem('nexus_staff', JSON.stringify(staff));
+  }, [staff]);
+  const [appLogs, setAppLogs] = useState<AppLog[]>(INITIAL_LOGS);
+  
+  // Settings
+  const [courierSettings, setCourierSettings] = useState<CourierConfig[]>([
+      { provider: 'Pathao', apiKey: '', apiSecret: '', enabled: false },
+      { provider: 'Steadfast', apiKey: '', apiSecret: '', enabled: false },
+      { provider: 'Paperfly', apiKey: '', apiSecret: '', enabled: false },
+      { provider: 'RedX', apiKey: '', apiSecret: '', enabled: false },
+  ]);
+  const [domainSettings, setDomainSettings] = useState<DomainConfig>({
+      subdomain: 'ishas-fashion.bizora.com',
+      customDomain: '',
+      status: 'Not Connected'
+  });
+  
+  const [promoCodes, setPromoCodes] = useState<PromoCode[]>([
+      { id: '1', code: 'WELCOME10', discount: 10, type: 'percentage', status: 'active' }
+  ]);
+  
+  const [shopPolicies, setShopPolicies] = useState<ShopPolicies>({
+      terms: 'All sales are final unless item is defective.',
+      refund: 'Refunds processed within 7 days of return receipt.',
+      shipping: 'Standard delivery takes 3-5 business days.'
+  });
+
+  const [categories, setCategories] = useState<Category[]>(INITIAL_CATEGORIES);
+  const [expenseCategories, setExpenseCategories] = useState<ExpenseCategory[]>(INITIAL_EXPENSE_CATEGORIES);
+
+  // CRM States
+  const [customerGroups, setCustomerGroups] = useState<CustomerGroup[]>([
+      { id: 'vip', name: 'VIP', color: '#8b5cf6', description: 'High value customers' },
+      { id: 'new', name: 'New', color: '#10b981', description: 'Joined in last 30 days' }
+  ]);
+  const [supportTickets, setSupportTickets] = useState<SupportTicket[]>([]);
+  const [feedbacks, setFeedbacks] = useState<CustomerFeedback[]>([]);
+  const [marketingCampaigns, setMarketingCampaigns] = useState<MarketingCampaign[]>([]);
+
+  // Production State
+  const [rawMaterials, setRawMaterials] = useState<RawMaterial[]>([
+      { id: 'm1', name: 'Cotton Fabric', stock: 500, unit: 'Meters', cost: 50, minLevel: 100 },
+      { id: 'm2', name: 'Thread Spool', stock: 200, unit: 'Pcs', cost: 10, minLevel: 50 },
+      { id: 'm3', name: 'Buttons', stock: 1000, unit: 'Pcs', cost: 1, minLevel: 200 },
+  ]);
+  const [boms, setBoms] = useState<BillOfMaterial[]>([]);
+  const [productionBatches, setProductionBatches] = useState<ProductionBatch[]>([]);
+
+  // --- FILTERED DATA (Based on Active Store) ---
   const currentStoreId = activeStore === 'HEAD_OFFICE' ? 'ALL' : activeStore.id;
 
+  const visibleProducts = useMemo(() => 
+    currentStoreId === 'ALL' ? products : products.filter(p => p.storeId === currentStoreId || !p.storeId), 
+  [products, currentStoreId]);
 
+  const visibleTransactions = useMemo(() => 
+    currentStoreId === 'ALL' ? transactions : transactions.filter(t => t.storeId === currentStoreId || !t.storeId), 
+  [transactions, currentStoreId]);
+
+  const visibleAccounts = useMemo(() => 
+    currentStoreId === 'ALL' ? financialAccounts : financialAccounts.filter(a => a.storeId === currentStoreId || !a.storeId), 
+  [financialAccounts, currentStoreId]);
+
+  const visibleOrders = useMemo(() => 
+    currentStoreId === 'ALL' ? onlineOrders : onlineOrders.filter(o => o.storeId === currentStoreId || !o.storeId), 
+  [onlineOrders, currentStoreId]);
+
+  const visibleStaff = useMemo(() => 
+    currentStoreId === 'ALL' ? staff : staff.filter(s => s.storeId === currentStoreId || !s.storeId), 
+  [staff, currentStoreId]);
 
   // --- ACTIONS (Inject Store ID) ---
 
@@ -532,85 +627,42 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const addTransaction = (entry: LedgerEntry) => {
-    console.log('Adding transaction:', entry);
-    console.log('Current storeId:', currentStoreId);
-    console.log('Financial accounts:', financialAccounts);
-    
     const user = localStorage.getItem('nexus_user');
     const userName = user ? JSON.parse(user).businessName : 'Staff';
     const targetStore = currentStoreId === 'ALL' ? '1' : currentStoreId;
     
     // Auto-assign account ID if not provided and not 'Due'
     let entryWithAccount = { ...entry };
-    const defaultAccount = financialAccounts.find(a => a.isDefault) || financialAccounts[0];
-    console.log('Default account:', defaultAccount);
-
-    if (entry.payments) {
-        entryWithAccount.payments = entry.payments.map(p => ({
-            ...p,
-            accountId: p.accountId || (p.method !== 'Due' ? defaultAccount?.id : undefined)
-        }));
-    } else if (!entry.accountId && entry.paymentMethod !== 'Due') {
+    if (!entry.accountId && entry.paymentMethod !== 'Due') {
+        // Find default account for THIS store
+        const defaultAccount = visibleAccounts.find(a => a.isDefault);
         if (defaultAccount) entryWithAccount.accountId = defaultAccount.id;
     }
 
     const finalEntry = { ...entryWithAccount, storeId: targetStore, isDeleted: false, createdBy: userName };
-    console.log('Final entry to add:', finalEntry);
     setTransactions(prev => [finalEntry, ...prev]);
 
-    if (navigator.onLine) {
-        syncService.syncData([finalEntry]);
-    } else {
-        const newPending = [...pendingTransactions, finalEntry];
-        setPendingTransactions(newPending);
-        localStorage.setItem('pending_transactions', JSON.stringify(newPending));
-    }
-
     // Update Account Balance Logic
-    const updateBalance = (accountId: string, amount: number, type: string) => {
+    if (entryWithAccount.accountId && entryWithAccount.paymentMethod !== 'Due') {
+        const amount = entry.amount;
         let balanceChange = 0;
-        // Income/Sales increase balance, Expenses/Purchases decrease balance
-        if (['Sale', 'Income', 'Purchase Return'].includes(type)) {
+
+        // Income logic
+        if (['Sale', 'Income', 'Purchase Return'].includes(entry.type)) {
             balanceChange = amount;
-        } else if (['Purchase', 'Expense', 'Sales Return', 'Salary'].includes(type)) {
+        } 
+        // Expense logic
+        else if (['Purchase', 'Expense', 'Sales Return', 'Salary'].includes(entry.type)) {
             balanceChange = -amount;
         }
 
-        console.log(`Updating balance for account ${accountId}: type=${type}, amount=${amount}, change=${balanceChange}`);
-
         if (balanceChange !== 0) {
-            setFinancialAccounts(prev => {
-                const accountExists = prev.some(a => a.id === accountId);
-                if (!accountExists) {
-                    console.warn(`Account ${accountId} not found in financialAccounts! Current accounts:`, prev);
-                }
-                
-                return prev.map(acc => {
-                    if (acc.id === accountId) {
-                        console.log(`Account ${acc.id} old balance: ${acc.balance}, new balance: ${acc.balance + balanceChange}`);
-                        return { ...acc, balance: acc.balance + balanceChange };
-                    }
-                    return acc;
-                });
-            });
+            setFinancialAccounts(prev => prev.map(acc => 
+                acc.id === entryWithAccount.accountId 
+                ? { ...acc, balance: acc.balance + balanceChange }
+                : acc
+            ));
         }
-    };
-
-    if (finalEntry.payments) {
-        console.log('Processing payments array:', finalEntry.payments);
-        finalEntry.payments.forEach(p => {
-            if (p.accountId && p.method !== 'Due') {
-                console.log('Calling updateBalance for payment:', p);
-                updateBalance(p.accountId, p.amount, finalEntry.type);
-            } else {
-                console.log('Skipping updateBalance for payment (no account or Due):', p);
-            }
-        });
-    } else if (finalEntry.accountId && finalEntry.paymentMethod !== 'Due') {
-        console.log('Calling updateBalance for single account:', finalEntry.accountId, finalEntry.amount, finalEntry.type);
-        updateBalance(finalEntry.accountId, finalEntry.amount, finalEntry.type);
-    } else {
-        console.log('Skipping updateBalance (no account or Due):', finalEntry);
     }
 
     // Update Loyalty if Sale
@@ -725,22 +777,22 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Staff Management
   const addStaff = (newStaff: Staff) => {
       const targetStore = currentStoreId === 'ALL' ? '1' : currentStoreId;
-      setStaff(prev => [...prev, { ...newStaff, storeId: targetStore }]);
+      setStaffState(prev => [...prev, { ...newStaff, storeId: targetStore }]);
       logAction('Staff', 'Add Staff', `Added ${newStaff.name}`);
   };
 
   const updateStaff = (id: string, data: Partial<Staff>) => {
-      setStaff(prev => prev.map(s => s.id === id ? { ...s, ...data } : s));
+      setStaffState(prev => prev.map(s => s.id === id ? { ...s, ...data } : s));
       logAction('Staff', 'Update Staff', `Updated staff ID: ${id}`);
   };
 
   const deleteStaff = (id: string) => {
-      setStaff(prev => prev.filter(s => s.id !== id));
+      setStaffState(prev => prev.filter(s => s.id !== id));
       logAction('Staff', 'Delete Staff', `Removed staff ID: ${id}`);
   };
 
   const markAttendance = (staffId: string, date: string, status: 'Present' | 'Absent' | 'Leave' | 'Half Day', time?: string) => {
-      setStaff(prev => prev.map(s => {
+      setStaffState(prev => prev.map(s => {
           if (s.id === staffId) {
               const currentRecord = s.attendance?.[date];
               
@@ -770,7 +822,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updatePerformance = (staffId: string, rating: number, comment: string) => {
-      setStaff(prev => prev.map(s => {
+      setStaffState(prev => prev.map(s => {
           if (s.id === staffId) {
               const currentReviews = s.performance?.reviews || [];
               const newReviews = [{ date: new Date().toLocaleDateString(), rating, comment }, ...currentReviews];
@@ -791,7 +843,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateLocation = (staffId: string, location: { lat: number, lng: number, address: string }) => {
-      setStaff(prev => prev.map(s => {
+      setStaffState(prev => prev.map(s => {
           if (s.id === staffId) {
               const timestamp = new Date().toLocaleString();
               const newLoc = { ...location, timestamp };
@@ -1014,7 +1066,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if(data.transactions) setTransactions(data.transactions);
           if(data.financialAccounts) setFinancialAccounts(data.financialAccounts);
           if(data.onlineOrders) setOnlineOrders(data.onlineOrders);
-          if(data.staff) setStaff(data.staff);
+          if(data.staff) setStaffState(data.staff);
           if(data.courierSettings) setCourierSettings(data.courierSettings);
           if(data.categories) setCategories(data.categories);
           if(data.expenseCategories) setExpenseCategories(data.expenseCategories);
@@ -1071,13 +1123,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <DataContext.Provider value={{ 
-      products, 
+      products: visibleProducts, 
       customers, 
       suppliers, 
-      transactions, 
-      financialAccounts,
-      onlineOrders,
-      staff,
+      transactions: visibleTransactions, 
+      financialAccounts: visibleAccounts,
+      onlineOrders: visibleOrders,
+      staff: visibleStaff,
       appLogs,
       courierSettings,
       domainSettings,

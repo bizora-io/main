@@ -19,8 +19,11 @@ const Marketing: React.FC = () => {
     const { customers, promoCodes, addPromoCode, deletePromoCode, logAction } = useData();
     const [activeTab, setActiveTab] = useState<'campaigns' | 'promotions'>('campaigns');
     
-    // Campaigns State
-    const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+    // Mock Campaigns State
+    const [campaigns, setCampaigns] = useState<Campaign[]>([
+        { id: '1', name: 'Ramadan Special Sale', type: 'SMS', status: 'Sent', date: '2024-03-10', audience: 'All Customers', reach: 120, content: 'Flat 50% off on all items! Visit us today.' },
+        { id: '2', name: 'New Collection Launch', type: 'Email', status: 'Scheduled', date: '2024-03-25', audience: 'High Value', reach: 45, content: 'Check out our new summer arrivals.' }
+    ]);
 
     const [showCampaignModal, setShowCampaignModal] = useState(false);
     const [newCampaign, setNewCampaign] = useState({ name: '', type: 'SMS', content: '', audience: 'All' });

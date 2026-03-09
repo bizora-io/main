@@ -4,24 +4,13 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
-import mongoose from "mongoose";
 import usersRouter from "./src/api/users.js";
-import syncRouter from "./src/api/sync.js";
 
 dotenv.config();
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
-
-  // MongoDB Connection
-  if (process.env.MONGODB_URI) {
-    mongoose.connect(process.env.MONGODB_URI)
-      .then(() => console.log("Connected to MongoDB"))
-      .catch(err => console.error("MongoDB connection error:", err));
-  } else {
-    console.warn("MONGODB_URI not set, database sync will be disabled");
-  }
 
   // Security Middlewares
   app.use(helmet({
@@ -46,7 +35,6 @@ async function startServer() {
 
   // API routes
   app.use("/api/users", usersRouter);
-  app.use("/api/sync", syncRouter);
 
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });

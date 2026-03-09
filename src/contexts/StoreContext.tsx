@@ -21,7 +21,9 @@ interface StoreContextType {
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 const DEFAULT_STORES: Store[] = [
-    { id: '1', name: 'Main Branch', location: 'Main Location', isHeadOffice: true }
+    { id: '1', name: 'Main Branch', location: '123 Main St, Cityville', isHeadOffice: true },
+    { id: '2', name: 'Downtown Outlet', location: '456 Market Ave, Metro City' },
+    { id: '3', name: 'Airport Kiosk', location: 'Terminal 2, Int. Airport' },
 ];
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
